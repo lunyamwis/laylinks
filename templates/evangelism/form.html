@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="col-4 offset-4 mb-5 mt-5">
+    <form id="testimonial_form" method="POST">
+        {% csrf_token %}
+        {{form|crispy }}
+        <input type="submit" name="submit" value="register" class="btn btn-info test-button" />
+    </form>
+</div>
+{% endblock %}

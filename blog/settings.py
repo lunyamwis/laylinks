@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'donation',
     'shop',
     'users',
+    'evangelism',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

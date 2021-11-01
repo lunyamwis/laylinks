@@ -1,11 +1,11 @@
 from django.urls import path
 
-from djvideomem.users.views import (
+from users.views import (
     user_detail_view,
     user_redirect_view,
     user_update_view,
     UserSubscriptionView,
-    CancelSubscriptionView
+    CancelSubscriptionView,
 )
 
 app_name = "users"

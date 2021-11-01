@@ -7,9 +7,12 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, RedirectView, UpdateView
 from django.views.generic import FormView
 
+
 import stripe
 
-from .forms import CancelSubscriptionForm
+from .forms import (
+    CancelSubscriptionForm
+)
 
 
 User = get_user_model()
@@ -26,6 +29,7 @@ class CancelSubscriptionView(LoginRequiredMixin, FormView):
         stripe.Subscription.delete(self.request.user.subscription.stripe_subscription_id)
         messages.success(self.request, "You have successfully cancelled your subscription")
         return super().form_valid(form)
+
 
 
 class UserSubscriptionView(LoginRequiredMixin, DetailView):
