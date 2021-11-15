@@ -39,11 +39,11 @@ urlpatterns = [
     path('tinymce/', include('tinymce.urls')),
     path("users/", include("users.urls", namespace="users")),
     path('accounts/', include('allauth.urls')),
-    path('courses/',include('content.urls')),
-    path('shop/',include('shop.urls')),
-    path('evangelism/',include('evangelism.urls',namespace='evangelism')),
-    path('donation/',include('donation.urls')),
-    path('payment/',include('payment.urls')),
+    path('courses/', include('content.urls')),
+    path('shop/', include('shop.urls')),
+    path('evangelism/', include('evangelism.urls', namespace='evangelism')),
+    path('donation/', include('donation.urls', namespace='donation')),
+    path('payment/', include('payment.urls')),
 ]
 
 if settings.DEBUG:

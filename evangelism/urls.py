@@ -9,8 +9,8 @@ from .views import (
 app_name = "evangelism"
 
 urlpatterns = [
-    path('member/create/',member_registration,name='member_registration'),
-    path('minister/create/',minister_registration,name='minister_registration'),
-    path('ministry/create/',ministry_registration,name='ministry_registration'),
-    path('field/create/',field_registration,name='field_registration'),
+    path('member/create/', member_registration, name='member_registration'),
+    path('minister/create/', minister_registration, name='minister_registration'),
+    path('ministry/create/', ministry_registration, name='ministry_registration'),
+    path('field/create/', field_registration, name='field_registration'),
 ]

@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
 
     'crispy_forms',
-    'tinymce',
+    'tinymce.apps.TinyMCEConfig',
 
     'marketing',
     'posts'

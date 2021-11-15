@@ -7,5 +7,5 @@ urlpatterns = [
     path("", CourseListView.as_view(), name='course-list'),
     path("<slug>/", CourseDetailView.as_view(), name='course-detail'),
     path("<slug>/<video_slug>/", VideoDetailView.as_view(), name='video-detail'),
-    
+
 ]

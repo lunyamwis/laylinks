@@ -9,16 +9,16 @@ class TinyMCEWidget(TinyMCE):
 
 
 class PostForm(forms.ModelForm):
-    content = forms.CharField(
-        widget=TinyMCEWidget(
-            attrs={'required': False, 'cols': 30, 'rows': 10}
-        )
-    )
+    # content = forms.CharField(
+    #     widget=TinyMCEWidget(
+    #         attrs={'required': False, 'cols': 30, 'rows': 10}
+    #     )
+    # )
 
     class Meta:
         model = Post
-        fields = ('title', 'overview', 'content', 'thumbnail', 
-        'categories', 'featured', 'previous_post', 'next_post')
+        fields = ('title', 'overview', 'content', 'thumbnail',
+                  'categories', 'featured', 'previous_post', 'next_post')
 
 
 class CommentForm(forms.ModelForm):
@@ -28,6 +28,7 @@ class CommentForm(forms.ModelForm):
         'id': 'usercomment',
         'rows': '4'
     }))
+
     class Meta:
         model = Comment
         fields = ('content', )

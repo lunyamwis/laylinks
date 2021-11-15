@@ -7,8 +7,9 @@ from users.models import User
 
 from .forms import (
     MemberRegistrationForm, MinisterRegistrationForm,
-    MinistryRegistrationForm,EvangelismForm
+    MinistryRegistrationForm, EvangelismForm
 )
+
 
 class MemberRegistration(View):
     form_class = MemberRegistrationForm
@@ -32,6 +33,7 @@ class MemberRegistration(View):
             return HttpResponseRedirect('/success/')
 
         return render(request, self.template_name, {'form': form})
+
 
 class MinisterRegistration(View):
     form_class = MinisterRegistrationForm
@@ -97,6 +99,7 @@ class FieldRegistration(View):
             return HttpResponseRedirect('/success/')
 
         return render(request, self.template_name, {'form': form})
+
 
 """
 class based views representations 
