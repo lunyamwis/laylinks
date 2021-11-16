@@ -30,7 +30,7 @@ def webhook(request):
         data = event['data']
     except Exception as e:
         return e
-        
+
     # Get the type of webhook event sent - used to check the status of PaymentIntents.
     event_type = event['type']
     data_object = data['object']
@@ -45,7 +45,8 @@ def webhook(request):
         webhook_object = data["object"]
         stripe_customer_id = webhook_object["customer"]
 
-        stripe_sub = stripe.Subscription.retrieve(webhook_object["subscription"])
+        stripe_sub = stripe.Subscription.retrieve(
+            webhook_object["subscription"])
         stripe_price_id = stripe_sub["plan"]["id"]
 
         pricing = Pricing.objects.get(stripe_price_id=stripe_price_id)
@@ -80,6 +81,7 @@ def webhook(request):
 
     return HttpResponse()
 
+
 class EnrollView(generic.TemplateView):
     template_name = "payment/enroll.html"
 
@@ -99,7 +101,7 @@ def PaymentView(request, slug):
 
     if subscription.is_active and subscription.pricing.stripe_price_id != "django-free-trial":
         return render(request, "payment/change.html", context)
-    
+
     return render(request, "payment/checkout.html", context)
 
 
@@ -194,4 +196,3 @@ class ChangeSubscriptionView(APIView):
             return Response({
                 "error": {'message': str(e)}
             })
-

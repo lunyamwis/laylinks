@@ -44,6 +44,7 @@ urlpatterns = [
     path('evangelism/', include('evangelism.urls', namespace='evangelism')),
     path('donation/', include('donation.urls', namespace='donation')),
     path('payment/', include('payment.urls')),
+    path('paypal/', include("paypal.standard.ipn.urls")),
 ]
 
 if settings.DEBUG:

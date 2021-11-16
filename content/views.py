@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Course, Video
 from .mixins import CoursePermissionMixin
 
+
 class CourseListView(generic.ListView):
     template_name = "content/course_list.html"
     queryset = Course.objects.all()
@@ -22,7 +23,7 @@ class VideoDetailView(LoginRequiredMixin, generic.DetailView):
         course = self.get_course()
         subscription = self.request.user.subscription
         pricing_tier = subscription.pricing
-        subscription_is_active = subscription.status == "active" or subscription.status == "trialing" 
+        subscription_is_active = subscription.status == "active" or subscription.status == "trialing"
         context.update({
             "has_permission": pricing_tier in course.pricing_tiers.all() and subscription_is_active
         })

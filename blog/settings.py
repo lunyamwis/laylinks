@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "rest_framework",
     "rest_framework.authtoken",
+    "paypal.standard.ipn",
 
     'crispy_forms',
     'tinymce.apps.TinyMCEConfig',
@@ -177,6 +178,9 @@ TINYMCE_DEFAULT_CONFIG = {
 MAILCHIMP_API_KEY = ''
 MAILCHIMP_DATA_CENTER = ''
 MAILCHIMP_EMAIL_LIST_ID = ''
+
+PAYPAL_RECEIVER_EMAIL = 'lunyamwi777@gmail.com'
+PAYPAL_TEST = True
 
 # Django Allauth
 

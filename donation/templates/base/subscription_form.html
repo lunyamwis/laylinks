@@ -1,0 +1,14 @@
+{% extends 'base/template.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Pay{% endblock %}
+{% block content %}
+<div id="container">
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ f|crispy }}
+        <hr>
+        <input type="submit" value="submit">
+    </form>
+</div>
+
+{% endblock %}
