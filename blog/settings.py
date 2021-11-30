@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "paypal.standard.ipn",
+    'payments',
 
     'crispy_forms',
     'tinymce.apps.TinyMCEConfig',
@@ -269,3 +270,18 @@ CORS_URLS_REGEX = r"^/api/.*$"
 STRIPE_PUBLIC_KEY = env("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")
+
+
+PAYMENT_HOST = 'localhost:8000'
+PAYMENT_USES_SSL = False
+PAYMENT_MODEL = 'payment.Payment'
+PAYMENT_VARIANTS = {
+    'Paypal': ('payments.paypal.PaypalCardProvider', {
+        'client_id': 'AV-yIwZ1ahGKCXg9gnHxxoZJ9wdA46Epb-LtSDWv6-af5ZB6oTLmE5K4tQSe9mDTMbyqS9k_tNlvgKrz',
+        'secret': 'EEEuiKlO7wm2m0A1XmnHaRkUqHTNx8UFM1ckRPMk5HwHn7QbbPBAjOkv0zrs2f4wTLQiyetzxQ74g1ZT'}), }
+
+# 'Paypal': ('payments.paypal.PaypalProvider', {
+#     'client_id': 'AV-yIwZ1ahGKCXg9gnHxxoZJ9wdA46Epb-LtSDWv6-af5ZB6oTLmE5K4tQSe9mDTMbyqS9k_tNlvgKrz',
+#     'secret': 'EEEuiKlO7wm2m0A1XmnHaRkUqHTNx8UFM1ckRPMk5HwHn7QbbPBAjOkv0zrs2f4wTLQiyetzxQ74g1ZT',
+#     'endpoint': 'https://api.sandbox.paypal.com',
+#     'capture': False})}

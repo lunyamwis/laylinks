@@ -4,7 +4,9 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
+from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from payments import RedirectNeeded, get_payment_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import stripe
@@ -196,3 +198,35 @@ class ChangeSubscriptionView(APIView):
             return Response({
                 "error": {'message': str(e)}
             })
+
+
+def payment_details(request, payment_id):
+    payment = get_object_or_404(get_payment_model(), id=payment_id)
+
+    # request.POST['variant'] = payment.variant
+    # request.POST['status'] = payment.status
+    # request.POST['variant'] = payment.variant
+    # request.POST['fraud_check'] = payment.fraud_check
+    # request.POST['currency'] = payment.currency
+    # request.POST['total'] = payment.total
+    # request.POST['delivery'] = payment.delivery
+    # request.POST['tax'] = payment.tax
+    # request.POST['captured_amount'] = payment.captured_amount
+    data = {}
+    data['variant'] = payment.variant
+    data['status'] = payment.status
+    data['variant'] = payment.variant
+    data['fraud_check'] = payment.fraud_status
+    data['currency'] = payment.currency
+    data['total'] = payment.total
+    data['delivery'] = payment.delivery
+    data['tax'] = payment.tax
+    data['captured_amount'] = payment.captured_amount
+
+    try:
+        form = payment.get_form(data=data or None)
+    except RedirectNeeded as redirect_to:
+        return redirect(str(redirect_to))
+    return TemplateResponse(request, 'payment_forms/payment.html', {
+        'form': form, 'payment': payment
+    })
