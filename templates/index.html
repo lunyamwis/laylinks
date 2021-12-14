@@ -5,15 +5,15 @@
 
 <!-- Hero Section-->
 <section
-  style="background: url({% static 'img/hero.jpg' %}); background-size: cover; background-position: center center"
+  style="background: url(https://res.cloudinary.com/actserv/image/upload/v1639472539/media/images/three_angels_2_y3ick3.jpg); background-size: cover; background-position: center center"
   class="hero">
   <div class="container">
     <div class="row">
       <div class="col-lg-7">
         <h1>Laylinks</h1><a href="#" class="hero-link">Discover More</a>
       </div>
-    </div><a href=".intro" class="continue link-scroll"><i class="fa fa-long-arrow-down"></i> Scroll Down</a>
-  </div>
+
+    </div>
 </section>
 <!--commencement of registration cards-->
 <section>
@@ -23,7 +23,7 @@
         <div class="card">
           <div class="card-body">
             <h6 class="card-title">Membership Enrollment</h6>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <p class="card-text">I want to invite ministers and ministries to minister at my place.</p>
             <a href="{% url 'evangelism:member_registration' %}" class="btn btn-primary">Enroll</a>
           </div>
         </div>
@@ -32,7 +32,7 @@
         <div class="card">
           <div class="card-body">
             <h6 class="card-title">Minister Enrollment</h6>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <p class="card-text">I want to be part of the lay ministers being reached out through laylinks.</p>
             <a href="{% url 'evangelism:minister_registration' %}" class="btn btn-primary">Enroll</a>
           </div>
         </div>
@@ -41,7 +41,7 @@
         <div class="card">
           <div class="card-body">
             <h6 class="card-title">Ministry Enrollment</h6>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+            <p class="card-text">I want my ministry to be available for service through laylinks.</p>
             <a href="{% url 'evangelism:ministry_registration' %}" class="btn btn-primary">Enroll</a>
           </div>
         </div>
@@ -55,11 +55,13 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-8">
-        <h2 class="h3">Some great intro here</h2>
-        <p class="text-big">Place a nice <strong>introduction</strong> here <strong>to catch reader's
-            attention</strong>. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-          incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud nisi ut aliquip ex ea
-          commodo consequat. Duis aute irure dolor in reprehenderi.</p>
+        <h2 class="h3">Who is laylinks</h2>
+        <p class="text-big">Here <strong>is </strong> what defines us <strong>we are:</strong>. a platform that connects
+          different lay ministers/ resource persons (speakers, singers/singing groups, medical missionaries, producers
+          etc) together, allows them to be easily identified, developed and deployed.
+          Almost like what this site does but now for ministry
+
+          .</p>
       </div>
     </div>
   </div>
@@ -111,8 +113,18 @@
   <div class="container">
     <div class="row">
       <div class="col-md-7">
-        <h2>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-          dolore magna aliqua</h2><a href="#" class="hero-link">View More</a>
+        <h2>We desire to</h2>
+        <ul>
+          <li>- Make it easier to identify existing and future lay ministers and lay ministries at two levels
+            By churches or people who may need their services but who would otherwise not know about their existence
+            and/or availability
+            By the wider community of lay ministers who do not know each other </li>
+          <li>- Create a community that supports intentional development of the lay minister and lay ministry cadres
+            through learning and development and a community of practice using technology</li>
+          <li>- Make it easier to support the deployment of lay ministers and ministries to ministry assignments in a
+            way that ensures </li>
+        </ul>
+        <a href="#" class="hero-link">View More</a>
       </div>
     </div>
   </div>
@@ -122,7 +134,7 @@
   <div class="container">
     <header>
       <h2>Latest from the blog</h2>
-      <p class="text-big">Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+      <p class="text-big">Here is our latest articles.</p>
     </header>
     <div class="row">
       {% for obj in latest %}
@@ -153,8 +165,8 @@
     <div class="row">
       <div class="col-md-6">
         <h2>Subscribe to Newsletter</h2>
-        <p class="text-big">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua.</p>
+        <p class="text-big">Do you desire to be updated on upcoming events, gatherings, missions and calls. Please
+          subscribe.</p>
       </div>
       <div class="col-md-8">
         <div class="form-holder">
@@ -174,26 +186,26 @@
 <section class="gallery no-padding">
   <div class="row">
     <div class="mix col-lg-3 col-md-3 col-sm-6">
-      <div class="item"><a href="img/gallery-1.jpg" data-fancybox="gallery" class="image"><img
-            src="{% static 'img/gallery-1.jpg' %}" alt="..." class="img-fluid">
+      <div class="item"><a href="#" data-fancybox="gallery" class="image"><img src="{% static 'img/gallery-1.jpg' %}"
+            alt="..." class="img-fluid">
           <div class="overlay d-flex align-items-center justify-content-center"><i class="icon-search"></i></div>
         </a></div>
     </div>
     <div class="mix col-lg-3 col-md-3 col-sm-6">
-      <div class="item"><a href="img/gallery-2.jpg" data-fancybox="gallery" class="image"><img
-            src="{% static 'img/gallery-2.jpg' %}" alt="..." class="img-fluid">
+      <div class="item"><a href="#" data-fancybox="gallery" class="image"><img src="{% static 'img/gallery-2.jpg' %}"
+            alt="..." class="img-fluid">
           <div class="overlay d-flex align-items-center justify-content-center"><i class="icon-search"></i></div>
         </a></div>
     </div>
     <div class="mix col-lg-3 col-md-3 col-sm-6">
-      <div class="item"><a href="img/gallery-3.jpg" data-fancybox="gallery" class="image"><img
-            src="{% static 'img/gallery-3.jpg' %}" alt="..." class="img-fluid">
+      <div class="item"><a href="#" data-fancybox="gallery" class="image"><img src="{% static 'img/gallery-3.jpg' %}"
+            alt="..." class="img-fluid">
           <div class="overlay d-flex align-items-center justify-content-center"><i class="icon-search"></i></div>
         </a></div>
     </div>
     <div class="mix col-lg-3 col-md-3 col-sm-6">
-      <div class="item"><a href="img/gallery-4.jpg" data-fancybox="gallery" class="image"><img
-            src="{% static 'img/gallery-4.jpg' %}" alt="..." class="img-fluid">
+      <div class="item"><a href="#" data-fancybox="gallery" class="image"><img src="{% static 'img/gallery-4.jpg' %}"
+            alt="..." class="img-fluid">
           <div class="overlay d-flex align-items-center justify-content-center"><i class="icon-search"></i></div>
         </a></div>
     </div>
