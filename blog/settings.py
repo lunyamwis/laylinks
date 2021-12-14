@@ -176,9 +176,9 @@ TINYMCE_DEFAULT_CONFIG = {
     'statusbar': True,
 }
 
-MAILCHIMP_API_KEY = '1229ff7875c3fe877ddd04022d02d205-us20'
-MAILCHIMP_DATA_CENTER = 'us20'
-MAILCHIMP_EMAIL_LIST_ID = '65263eee5c'
+MAILCHIMP_API_KEY = env('MAILCHIMP_API_KEY')
+MAILCHIMP_DATA_CENTER = env('MAILCHIMP_DATA_CENTER')
+MAILCHIMP_EMAIL_LIST_ID = env('MAILCHIMP_EMAIL_LIST_ID')
 
 PAYPAL_RECEIVER_EMAIL = 'lunyamwi777@gmail.com'
 PAYPAL_TEST = True
@@ -277,8 +277,8 @@ PAYMENT_USES_SSL = False
 PAYMENT_MODEL = 'payment.Payment'
 PAYMENT_VARIANTS = {
     'Paypal': ('payments.paypal.PaypalCardProvider', {
-        'client_id': 'AV-yIwZ1ahGKCXg9gnHxxoZJ9wdA46Epb-LtSDWv6-af5ZB6oTLmE5K4tQSe9mDTMbyqS9k_tNlvgKrz',
-        'secret': 'EEEuiKlO7wm2m0A1XmnHaRkUqHTNx8UFM1ckRPMk5HwHn7QbbPBAjOkv0zrs2f4wTLQiyetzxQ74g1ZT'}), }
+        'client_id': env("PAYPAL_CLIENT"),
+        'secret': env("PAYPAL_SECRET")}), }
 
 # 'Paypal': ('payments.paypal.PaypalProvider', {
 #     'client_id': 'AV-yIwZ1ahGKCXg9gnHxxoZJ9wdA46Epb-LtSDWv6-af5ZB6oTLmE5K4tQSe9mDTMbyqS9k_tNlvgKrz',
