@@ -11,7 +11,8 @@ from django.views.generic import FormView
 import stripe
 
 from .forms import (
-    CancelSubscriptionForm
+    CancelSubscriptionForm,
+    UserChangeForm
 )
 
 
@@ -26,10 +27,11 @@ class CancelSubscriptionView(LoginRequiredMixin, FormView):
         return reverse("users:detail", kwargs={"username": self.request.user.username})
 
     def form_valid(self, form):
-        stripe.Subscription.delete(self.request.user.subscription.stripe_subscription_id)
-        messages.success(self.request, "You have successfully cancelled your subscription")
+        stripe.Subscription.delete(
+            self.request.user.subscription.stripe_subscription_id)
+        messages.success(
+            self.request, "You have successfully cancelled your subscription")
         return super().form_valid(form)
-
 
 
 class UserSubscriptionView(LoginRequiredMixin, DetailView):
@@ -79,3 +81,11 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+class UserProfile(LoginRequiredMixin, FormView):
+    form_class = UserChangeForm
+    template_name = 'account/forms.html'
+
+    def form_valid(self, form):
+        return super().form_valid(form)

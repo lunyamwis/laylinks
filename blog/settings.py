@@ -285,3 +285,5 @@ PAYMENT_VARIANTS = {
 #     'secret': 'EEEuiKlO7wm2m0A1XmnHaRkUqHTNx8UFM1ckRPMk5HwHn7QbbPBAjOkv0zrs2f4wTLQiyetzxQ74g1ZT',
 #     'endpoint': 'https://api.sandbox.paypal.com',
 #     'capture': False})}
+
+LOGIN_REDIRECT_URL = '/users/~redirect/'

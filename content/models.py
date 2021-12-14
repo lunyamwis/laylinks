@@ -4,6 +4,7 @@ from django.db.models.signals import pre_save, post_save
 from django.contrib.auth.signals import user_logged_in
 from django.utils.text import slugify
 from django.shortcuts import reverse
+from payment.models import Payment
 from django.contrib.auth import get_user_model
 from allauth.account.signals import email_confirmed
 import stripe
@@ -11,6 +12,7 @@ import stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 User = get_user_model()
+
 
 class Pricing(models.Model):
     name = models.CharField(max_length=100)  # Basic / Pro / Premium
@@ -24,8 +26,10 @@ class Pricing(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    pricing = models.ForeignKey(Pricing, on_delete=models.CASCADE, related_name='subscriptions')
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    pricing = models.ForeignKey(
+        Pricing, on_delete=models.CASCADE, related_name='subscriptions')
     created = models.DateTimeField(auto_now_add=True)
     stripe_subscription_id = models.CharField(max_length=50)
     status = models.CharField(max_length=100)
@@ -53,15 +57,18 @@ class Course(models.Model):
 
 
 class Video(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='videos')
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name='videos')
     vimeo_id = models.CharField(max_length=50)
     title = models.CharField(max_length=150)
     slug = models.SlugField(unique=True)
     description = models.TextField()
+    payment = models.ForeignKey(
+        "payment.Payment", on_delete=models.CASCADE, null=True, blank=True)
     order = models.IntegerField(default=1)
 
     class Meta:
-        ordering = ["order"]    
+        ordering = ["order"]
 
     def __str__(self):
         return self.title
@@ -85,23 +92,28 @@ def pre_save_video(sender, instance, *args, **kwargs):
 
 def post_email_confirmed(request, email_address, *args, **kwargs):
     user = User.objects.get(email=email_address.email)
-    free_trial_pricing = Pricing.objects.get(name='Free Trial')
+    free_trial_pricing = Pricing.objects.get(name='Pricing')
     subscription = Subscription.objects.create(
-        user=user, 
+        user=user,
         pricing=free_trial_pricing
     )
-    stripe_customer = stripe.Customer.create(
-        email=user.email
-    )
-    stripe_subscription = stripe.Subscription.create(
-        customer=stripe_customer["id"],
-        items=[{'price': 'django-free-trial'}],
-        trial_period_days=7
-    )
-    subscription.status = stripe_subscription["status"]  # trialing
-    subscription.stripe_subscription_id = stripe_subscription["id"]
+    payment = Payment()
+    payment.variant = 'Paypal'
+    payment.total = free_trial_pricing
+    payment.payment_purpose = 'C'
+    payment.save()
+    # stripe_customer = stripe.Customer.create(
+    #     email=user.email
+    # )
+    # stripe_subscription = stripe.Subscription.create(
+    #     customer=stripe_customer["id"],
+    #     items=[{'price': 'django-free-trial'}],
+    #     trial_period_days=7
+    # )
+    subscription.status = 'active'  # trialing
+    # subscription.stripe_subscription_id = stripe_subscription["id"]
     subscription.save()
-    user.stripe_customer_id = stripe_customer["id"]
+    # user.stripe_customer_id = stripe_customer["id"]
     user.save()
 
 

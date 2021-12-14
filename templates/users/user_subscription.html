@@ -4,7 +4,7 @@
 {% block title %}User: {{ object.username }}{% endblock %}
 
 {% block content %}
-<div>
+<div class="container">
 
   {% if object == request.user %}
   <!-- Action buttons -->
@@ -13,7 +13,8 @@
     <div class="col-sm-12">
       <a class="btn btn-primary" href="{% url 'users:update' %}" role="button">My Info</a>
       <a class="btn btn-primary" href="{% url 'account_email' %}" role="button">E-Mail</a>
-      <a class="btn btn-primary" href="{% url 'users:subscription' request.user.username %}" role="button">My subscription</a>
+      <a class="btn btn-primary" href="{% url 'users:subscription' request.user.username %}" role="button">My
+        subscription</a>
       <!-- Your Stuff: Custom user template urls -->
     </div>
 
@@ -27,16 +28,15 @@
     </h2>
     <h3 class="text-gray-500 mb-3">Status: {{ user.subscription.status }}</h3>
     {% if user.subscription.status != "canceled" %}
-      <form method="post" class="py-3 mt-3" action="{% url 'users:cancel-subscription' request.user.username %}">
-        {% csrf_token %}
-        {{ form }}
-        <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded" type="submit">
-          Cancel Subscription
-        </button>
-      </form>
+    <form method="post" class="py-3 mt-3" action="{% url 'users:cancel-subscription' request.user.username %}">
+      {% csrf_token %}
+      {{ form }}
+      <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded" type="submit">
+        Cancel Subscription
+      </button>
+    </form>
     {% endif %}
   </div>
 
 </div>
 {% endblock content %}
-

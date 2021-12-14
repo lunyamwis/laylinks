@@ -2,6 +2,7 @@ from django.contrib.auth import forms, get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django import forms as normal_forms
+# from allauth.account.forms import SignupForm
 
 
 User = get_user_model()

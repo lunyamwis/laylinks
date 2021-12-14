@@ -1,0 +1,22 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+{% block head_title %}{% trans "User Profile" %}{% endblock %}
+
+{% block inner %}
+
+<h1>{% trans "User Profile" %}</h1>
+
+
+
+<form method="POST" action="{% url 'users:user-profile' %}">
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <button class="bg-teal-500 hover:bg-teal-600 text-white px-3 py-2 rounded" type="submit">{% trans "Submit"
+        %}</button>
+</form>
+
+{% endblock %}

@@ -100,7 +100,7 @@ class Order(models.Model):
     billing_address = models.ForeignKey(
         'Address', related_name='billing_address', on_delete=models.SET_NULL, blank=True, null=True)
     payment = models.ForeignKey(
-        'Payment', on_delete=models.SET_NULL, blank=True, null=True)
+        'payment.Payment', on_delete=models.SET_NULL, blank=True, null=True)
     coupon = models.ForeignKey(
         'Coupon', on_delete=models.SET_NULL, blank=True, null=True)
     being_delivered = models.BooleanField(default=False)
@@ -120,7 +120,7 @@ class Order(models.Model):
     '''
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username}-{self.ref_code}"
 
     def get_total(self):
         total = 0

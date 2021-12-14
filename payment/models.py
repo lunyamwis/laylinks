@@ -8,6 +8,16 @@ from payments.models import BasePayment
 
 
 class Payment(BasePayment):
+    class PurposeOptions(models.TextChoices):
+        BUY = ('B', 'Buy')
+        DONATION = ('D', 'Donation')
+        COURSE = ('C', 'Course')
+
+    payment_purpose = models.CharField(
+        max_length=255, choices=PurposeOptions.choices, default=PurposeOptions.BUY)
+
+    def __str__(self):
+        return f"{self.variant} - {self.billing_country_area}"
 
     def get_failure_url(self) -> str:
         return super().get_failure_url()

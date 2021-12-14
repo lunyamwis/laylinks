@@ -12,10 +12,13 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from paypal.standard.forms import PayPalPaymentsForm
+# Payment
+from payment.models import Payment
+
 from django.views.generic import ListView, DetailView, View
 
 from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
-from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
+from .models import Item, OrderItem, Order, Address, Coupon, Refund, UserProfile
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -197,7 +200,7 @@ class CheckoutView(View):
 
                 if payment_option == 'S':
                     return redirect('core:payment', payment_option='stripe')
-                elif payment_option == 'P':
+                elif payment_option == 'Paypal':
                     return redirect('core:payment', payment_option='paypal')
                 else:
                     messages.warning(
@@ -213,29 +216,34 @@ class PaymentView(View):
         order = Order.objects.get(user=self.request.user, ordered=False)
         host = self.request.get_host()
         amount = int(order.get_total())
-        if order.billing_address:
-            paypal_dict = {
-                "cmd": "_xclick",
-                'business': settings.PAYPAL_RECEIVER_EMAIL,
-                'amount': amount,
-                'item_name': 'Donate',
-                'custom': 1,     # custom data, pass something meaningful here
-                'currency_code': 'USD',
-                'notify_url': 'http://{}{}'.format(host,
-                                                   reverse('paypal-ipn')),
-                'return_url': 'http://{}{}'.format(host,
-                                                   redirect('donation:success', amount)),
-                'cancel_return': 'http://{}{}'.format(host,
-                                                      reverse('donation:cancel')),
-            }
-
-            form = PayPalPaymentsForm(
-                initial=paypal_dict, button_type="buy")
-            userprofile = self.request.user.userprofile
+        if order.billing_address or order.shipping_address:
 
             payment = Payment()
+            payment.variant = 'Paypal'
             payment.user = self.request.user
-            payment.amount = order.get_total()
+            payment.total = order.get_total()
+            payment.tax = order.get_total() * 0.1
+            payment.delivery = order.get_total() * 0.05
+
+            # import pdb
+            # pdb.set_trace()
+            billing_address = order.billing_address
+            payment.billing_first_name = billing_address.user.first_name
+            payment.billing_last_name = billing_address.user.last_name
+            payment.billing_address_1 = billing_address.street_address
+            payment.billing_address_2 = billing_address.apartment_address
+            payment.billing_country_area = billing_address.country
+            payment.billing_country_code = billing_address.country
+
+            if order.shipping_address:
+                shipping_address = order.shipping_address
+                payment.billing_first_name = shipping_address.user.first_name
+                payment.billing_last_name = shipping_address.user.last_name
+                payment.billing_address_1 = shipping_address.street_address
+                payment.billing_address_2 = shipping_address.apartment_address
+                payment.billing_country_area = shipping_address.country
+                payment.billing_country_code = shipping_address.country
+
             payment.save()
 
             # assign the payment to the order
@@ -251,7 +259,7 @@ class PaymentView(View):
             order.save()
 
             messages.success(self.request, "Your order was successful!")
-            return render(self.request, 'base/purchase.html', locals())
+            return redirect("payment:payment_details", payment_id=payment.id)
         else:
             messages.warning(
                 self.request, "You have not added a billing address")
@@ -262,6 +270,8 @@ class PaymentView(View):
         form = PaymentForm(self.request.POST)
         host = self.request.get_host()
         userprofile = UserProfile.objects.get(user=self.request.user)
+        # import pdb
+        # pdb.set_trace()
         if form.is_valid():
             save = form.cleaned_data.get('save')
             use_default = form.cleaned_data.get('use_default')
@@ -275,47 +285,49 @@ class PaymentView(View):
 
             try:
 
-                if True:
-                    paypal_dict = {
-                        "cmd": "_xclick",
-                        'business': settings.PAYPAL_RECEIVER_EMAIL,
-                        'amount': amount,
-                        'item_name': 'Donate',
-                        'custom': 1,     # custom data, pass something meaningful here
-                        'currency_code': 'USD',
-                        'notify_url': 'http://{}{}'.format(host,
-                                                           reverse('paypal-ipn')),
-                        'return_url': 'http://{}{}'.format(host,
-                                                           redirect('donation:success', amount)),
-                        'cancel_return': 'http://{}{}'.format(host,
-                                                              reverse('donation:cancel')),
-                    }
+                if order.billing_address or order.shipping_address:
 
-                    form = PayPalPaymentsForm(
-                        initial=paypal_dict, button_type="buy")
-                else:
-                    pass
+                    payment = Payment()
+                    payment.variant = form.cleaned_data.get('payment_option')
 
-                # create the payment
-                payment = Payment()
-                payment.user = self.request.user
-                payment.amount = order.get_total()
-                payment.save()
+                    payment.user = self.request.user
+                    payment.total = order.get_total()
+                    payment.tax = order.get_total() * 0.1
+                    payment.delivery = order.get_total() * 0.05
 
-                # assign the payment to the order
+                    # import pdb
+                    # pdb.set_trace()
+                    billing_address = order.billing_address
+                    payment.billing_first_name = billing_address.user.first_name
+                    payment.billing_last_name = billing_address.user.last_name
+                    payment.billing_address_1 = billing_address.street_address
+                    payment.billing_address_2 = billing_address.apartment_address
+                    payment.billing_country_area = billing_address.country
+                    payment.billing_country_code = billing_address.country
 
-                order_items = order.items.all()
-                order_items.update(ordered=True)
-                for item in order_items:
-                    item.save()
+                    if order.shipping_address:
+                        shipping_address = order.shipping_address
+                        payment.billing_first_name = shipping_address.user.first_name
+                        payment.billing_last_name = shipping_address.user.last_name
+                        payment.billing_address_1 = shipping_address.street_address
+                        payment.billing_address_2 = shipping_address.apartment_address
+                        payment.billing_country_area = shipping_address.country
+                        payment.billing_country_code = shipping_address.country
 
-                order.ordered = True
-                order.payment = payment
-                order.ref_code = create_ref_code()
-                order.save()
+                    payment.payment_purpose = 'B'
+                    payment.save()
 
-                messages.success(self.request, "Your order was successful!")
-                return render(self.request, 'base/purchase.html', locals())
+                    # assign the payment to the order
+
+                    order_items = order.items.all()
+                    order_items.update(ordered=True)
+                    for item in order_items:
+                        item.save()
+
+                    order.ordered = True
+                    order.payment = payment
+                    order.ref_code = create_ref_code()
+                    order.save()
 
             except Exception as e:
                 # send an email to ourselves
@@ -323,8 +335,9 @@ class PaymentView(View):
                     self.request, "A serious error occurred. We have been notifed.")
                 return redirect("/")
 
-        messages.warning(self.request, "Invalid data received")
-        return redirect("/payment/stripe/")
+        messages.success(
+            self.request, "Your order was successful!")
+        return redirect("payment:payment_details", payment_id=payment.id)
 
 
 class HomeView(ListView):

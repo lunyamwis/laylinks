@@ -90,7 +90,7 @@ class Minister(BaseModel):
     contact_assistant_name = models.CharField(max_length=255)
     contact_assistant_email = models.EmailField()
     conference_name = models.CharField(max_length=255)
-    fields = models.ManyToManyField(Evangelism)
+    fields = models.ManyToManyField(Evangelism, blank=True, null=True)
     home_church_name = models.TextField()
     home_church_email = models.EmailField(max_length=254)
     user = models.ForeignKey(
@@ -117,7 +117,7 @@ class Ministry(BaseModel):
     category = models.CharField(max_length=50, choices=TypeOptions.choices,
                                 default=TypeOptions.INDEPENDENT)
     conference_name = models.CharField(max_length=255)
-    fields = models.ManyToManyField(Evangelism)
+    fields = models.ManyToManyField(Evangelism, blank=True, null=True)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True)
 

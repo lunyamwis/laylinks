@@ -17,7 +17,7 @@ class MinisterRegistrationForm(ModelForm):
 
     class Meta:
         model = Minister
-        exclude = ['user']
+        exclude = ['user', 'fields']
 
 
 class MinistryRegistrationForm(ModelForm):
@@ -25,7 +25,7 @@ class MinistryRegistrationForm(ModelForm):
 
     class Meta:
         model = Ministry
-        exclude = ['user']
+        exclude = ['user', 'fields']
 
 
 class EvangelismForm(ModelForm):

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+<hr />
+<div class="container">
+    <table class="table">
+        <thead class="thead-dark">
+            {% if data == 'minister' %}
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Church</th>
+                <th scope="col">Events</th>
+                <th scope="col">Invite</th>
+            </tr>
+            {% elif data == 'ministry' %}
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Church</th>
+                <th scope="col">Events</th>
+                <th scope="col">Invite</th>
+            </tr>
+            {% else %}
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Field</th>
+                <th scope="col">Event Name</th>
+            </tr>
+            {% endif %}
+        </thead>
+        <tbody>
+            {% if data == 'minister' %}
+            {% for obj in object_list %}
+            <tr>
+                <th scope="row">{{obj.pk}}</th>
+                <td>{{obj.name}}</td>
+                <td>{{obj.home_church_name}}</td>
+
+                {% if obj.fields.all %}
+                <td>
+                    {% for event in obj.fields.all %}
+                    <li>
+                        <ul>{{event.get_field_display}}</ul>
+                        <ul>{{event.event_name}}</ul>
+                    </li>
+                    {% endfor %}
+                </td>
+                {% else %}
+                <td>no events</td>
+                {% endif %}
+                <td><a href="{% url 'evangelism:field' obj.name %}"> <button
+                            class="btn btn-sm btn-success">Invite</button></a></td>
+            </tr>
+            {% endfor %}
+            {% elif data == 'ministry' %}
+            {% for obj in object_list %}
+            <tr>
+                <th scope="row">{{obj.pk}}</th>
+                <td>{{obj.name}}</td>
+                <td>{{obj.conference_name}}</td>
+
+                {% if obj.fields.all %}
+                {% for event in obj.fields.all %}
+                <td>
+                    <li>
+                        <ul>{{event.get_field_display}}</ul>
+                        <ul>{{event.event_name}}</ul>
+                    </li>
+                </td>
+                {% endfor %}
+                {% else %}
+                <td>no events</td>
+                {% endif %}
+                <td><a href="{% url 'evangelism:field' obj.name %}"> <button
+                            class="btn btn-sm btn-success">Invite</button></a></td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            {% for obj in object_list %}
+            <tr>
+                <th scope="row">{{obj.pk}}</th>
+                <td>{{obj.get_field_display}}</td>
+                <td>{{obj.event_name}}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
