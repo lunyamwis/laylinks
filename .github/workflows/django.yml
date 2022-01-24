@@ -50,7 +50,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v1
-    - name: Executing remote  command
+    - name: deploying-laylinks
       run: |
         git push heroku main
     needs: [build]
