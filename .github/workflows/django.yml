@@ -55,6 +55,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Executing remote  command
-    run: |
-      git push heroku main
+      run: |
+        git push heroku main
     needs: [build]
