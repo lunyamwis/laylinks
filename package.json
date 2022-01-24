@@ -1,0 +1,30 @@
+{
+  "name": "laylinks",
+  "version": "1.0.0",
+  "description": "laylinksfend",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lunyamwis/laylinks.git"
+  },
+  "author": "martin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lunyamwis/laylinks/issues"
+  },
+  "homepage": "https://github.com/lunyamwis/laylinks#readme",
+  "devDependencies": {
+    "autoprefixer": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "node-sass": "^4.5.3",
+    "postcss-cli": "^4.1.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.1.3"
+  }
+}
