@@ -44,3 +44,13 @@ jobs:
         export STRIPE_SECRET_KEY='ACWE'
         export STRIPE_WEBHOOK_SECRET='asfdxc'
         python manage.py test
+  
+  deploy:
+    name: Deploy Laylinks
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v1
+      - name: Executing remote  command
+    run: |
+      git push heroku main
+    needs: [build]
