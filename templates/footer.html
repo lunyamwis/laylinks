@@ -1,3 +1,9 @@
+<style>
+  footer {
+    background-color: #144C62;
+  }
+</style>
+
 <footer class="page-footer text-center font-small mt-4 wow fadeIn">
 
   <hr class="my-4">
@@ -33,16 +39,22 @@
     </a>
 
     <a href="{% url 'donation:donation' %}">
-      <button class="btn-success"><i class="fas fa-money">Donate One Time</i></button>
-    </a> <b><i>or</i></b>
+      <i class="fas fa-money">
+        &nbsp; Donate One Time
+      </i>
+    </a>
+    <b><i class="text-white">or</i></b>
+    &nbsp;
     <a href="{% url 'donation:subscription' %}">
-      <button class="btn-success"><i class="fas fa-money">Donate Monthly/Periodically</i></button>
+      <i class="fas fa-money">
+        &nbsp; Donate Monthly/Periodically
+      </i>
     </a>
   </div>
   <!-- Social icons -->
 
   <!--Copyright-->
-  <div class="footer-copyright py-3">
+  <div class="footer-copyright py-3 text-white">
     © 2019 Copyright:
     <a href="https://lunyamwi.github.io" target="_blank"> Lunyamwi.com </a>
   </div>

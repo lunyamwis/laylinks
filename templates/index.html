@@ -2,16 +2,36 @@
 {% load static %}
 
 {% block content %}
+<style>
+  .btn.btn-info {
+    background-color: #144C62;
+  }
 
+  section.newsletter .submit {
+    background: #144C62;
+  }
+
+  .card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
+  }
+
+  div.discover {
+    background: #144C62;
+  }
+</style>
 <!-- Hero Section-->
 <section
-  style="background: url(https://res.cloudinary.com/actserv/image/upload/v1639472539/media/images/three_angels_2_y3ick3.jpg); background-size: cover; background-position: center center"
+  style="background: url(https://res.cloudinary.com/actserv/image/upload/v1643029051/media/images/links_bi5pjd.png); background-size: cover; background-position: center center"
   class="hero">
   <div class="container">
     <div class="row">
-      <div class="col-lg-7">
-        <h1>Laylinks</h1><a href="#" class="hero-link">Discover More</a>
+      <div class="col-3 text-white discover">
+        <h1>Laylinks</h1><a href="{% url 'about' %}" class="hero-link">Discover More</a>
+        <hr>
       </div>
+
 
     </div>
 </section>
@@ -21,28 +41,35 @@
     <div class="row">
       <div class="col-sm-4">
         <div class="card">
-          <div class="card-body">
-            <h6 class="card-title">Membership Enrollment</h6>
+
+          <img src="https://res.cloudinary.com/actserv/image/upload/v1643027318/media/images/membership_d0lru5.jpg"
+            class="card-img-top" alt="...">
+          <div class="card-body" style="font-size: 1.4em;">
+            <h3 class="card-title">Membership Enrollment</h3>
             <p class="card-text">I want to invite ministers and ministries to minister at my place.</p>
-            <a href="{% url 'evangelism:member_registration' %}" class="btn btn-primary">Enroll</a>
+            <a href="{% url 'evangelism:member_registration' %}" class="btn btn-info">Enroll as a member</a>
           </div>
         </div>
       </div>
       <div class="col-sm-4">
         <div class="card">
-          <div class="card-body">
-            <h6 class="card-title">Minister Enrollment</h6>
+          <img src="https://res.cloudinary.com/actserv/image/upload/v1643027317/media/images/man_suit_bible_yaphee.jpg"
+            class="card-img-top" alt="...">
+          <div class="card-body" style="font-size: 1.4em;">
+            <h3 class="card-title">Minister Enrollment</h3>
             <p class="card-text">I want to be part of the lay ministers being reached out through laylinks.</p>
-            <a href="{% url 'evangelism:minister_registration' %}" class="btn btn-primary">Enroll</a>
+            <a href="{% url 'evangelism:minister_registration' %}" class="btn btn-info">Enroll as a minister</a>
           </div>
         </div>
       </div>
       <div class="col-sm-4">
         <div class="card">
-          <div class="card-body">
-            <h6 class="card-title">Ministry Enrollment</h6>
+          <img src="https://res.cloudinary.com/actserv/image/upload/v1643027318/media/images/ministry_eay4pq.jpg"
+            class="card-img-top" alt="...">
+          <div class="card-body" style="font-size: 1.4em;">
+            <h3 class="card-title">Ministry Enrollment</h3>
             <p class="card-text">I want my ministry to be available for service through laylinks.</p>
-            <a href="{% url 'evangelism:ministry_registration' %}" class="btn btn-primary">Enroll</a>
+            <a href="{% url 'evangelism:ministry_registration' %}" class="btn btn-info">Enroll my ministry</a>
           </div>
         </div>
       </div>
@@ -58,10 +85,7 @@
         <h2 class="h3">Who is laylinks</h2>
         <p class="text-big">Here <strong>is </strong> what defines us <strong>we are:</strong>. a platform that connects
           different lay ministers/ resource persons (speakers, singers/singing groups, medical missionaries, producers
-          etc) together, allows them to be easily identified, developed and deployed.
-          Almost like what this site does but now for ministry
-
-          .</p>
+          etc) together, allows them to be easily identified, developed and deployed.</p>
       </div>
     </div>
   </div>
@@ -112,19 +136,19 @@
   class="divider">
   <div class="container">
     <div class="row">
-      <div class="col-md-7">
+      <div class="col-md-7" style="font-size: 1.4em;">
         <h2>We desire to</h2>
         <ul>
-          <li>- Make it easier to identify existing and future lay ministers and lay ministries at two levels
+          <li>Make it easier to identify existing and future lay ministers and lay ministries at two levels
             By churches or people who may need their services but who would otherwise not know about their existence
             and/or availability
             By the wider community of lay ministers who do not know each other </li>
-          <li>- Create a community that supports intentional development of the lay minister and lay ministry cadres
+          <li> Create a community that supports intentional development of the lay minister and lay ministry cadres
             through learning and development and a community of practice using technology</li>
-          <li>- Make it easier to support the deployment of lay ministers and ministries to ministry assignments in a
+          <li> Make it easier to support the deployment of lay ministers and ministries to ministry assignments in a
             way that ensures </li>
         </ul>
-        <a href="#" class="hero-link">View More</a>
+        <a href="{% url 'about' %}" class="hero-link">View More</a>
       </div>
     </div>
   </div>

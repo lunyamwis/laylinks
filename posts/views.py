@@ -96,6 +96,13 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def about(request):
+    context = {
+        'about': True,
+    }
+    return render(request, 'about.html', context)
+
+
 class PostListView(ListView):
     form = EmailSignupForm()
     model = Post
