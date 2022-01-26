@@ -29,6 +29,7 @@ django-paypal==1.1.1
 django-restframework==0.0.1
 django-timezone-field==4.2.1
 django-tinymce4-lite==1.7.4
+django.js==0.8.1
 djangorestframework==3.12.4
 factory-boy==3.0.1
 Faker==11.3.0

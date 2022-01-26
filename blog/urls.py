@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
-
+from django.urls import path, include, re_path
 from posts.views import (
     index,
     about,
@@ -21,6 +20,14 @@ from posts.views import (
 )
 from marketing.views import email_list_signup
 
+# from djangojs.views import JasmineView, QUnitView
+
+# urlpatterns = [
+#     re_path('^jasmine$', JasmineView.as_view(
+#         js_files='js/specs/*.specs.js'), name='my_jasmine_view'),
+#     re_path('^qunit$', QUnitView.as_view(
+#         js_files='js/tests/*.tests.js'), name='my_qunit_view'),
+# ]
 urlpatterns = [
     path('admin/', admin.site.urls),
 

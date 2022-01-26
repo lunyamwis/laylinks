@@ -7,14 +7,14 @@
 
 {% block inner %}
 
-<h1>{% trans "Sign In" %}</h1>
+<h1 style="color: #144C62;">{% trans "Sign In" %}</h1>
 
 {% get_providers as socialaccount_providers %}
 
 {% if socialaccount_providers %}
 <p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+  of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
+  for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
 <div class="socialaccount_ballot">
 
@@ -30,7 +30,8 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
 {% else %}
 <p>{% blocktrans %}If you have not created an account yet, then please
-<a class="text-teal-500 hover:text-teal-600" href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+  <a class="text-teal-500 hover:text-teal-600" href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}
+</p>
 {% endif %}
 
 <form class="login" method="POST" action="{% url 'account_login' %}">
@@ -39,9 +40,11 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
-  <a class="text-teal-500 hover:text-teal-600" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-  <button class="bg-teal-500 hover:bg-teal-600 text-white px-3 py-2 rounded" type="submit">{% trans "Sign In" %}</button>
+  <a class="text-teal-500 hover:text-teal-600" href="{% url 'account_reset_password' %}">
+    {% trans "Forgot Password?"%}</a>
+  <br>
+  <button class="bg-teal-500 hover:bg-teal-600 text-white px-3 py-2 rounded" type="submit"
+    style="background: #144C62;">{% trans "Sign In" %}</button>
 </form>
 
 {% endblock %}
-
