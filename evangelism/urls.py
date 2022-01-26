@@ -1,6 +1,9 @@
 from django.urls import path
+
+from evangelism.forms import ChurchMemberDetailsForm, MemberRegistrationForm
 from .views import (
     FieldListView,
+    MemberRegistrationWizzard,
     MinistryListView,
     field_detail,
     member_registration,
@@ -15,6 +18,8 @@ from .views import (
 app_name = "evangelism"
 
 urlpatterns = [
+    path('member/register/', MemberRegistrationWizzard.as_view(
+        [MemberRegistrationForm, ChurchMemberDetailsForm], template_name="evangelism/wizzard.html"), name='member_register_wizzard'),
     path('member/create/', member_registration, name='member_registration'),
     path('minister/create/', minister_registration, name='minister_registration'),
     path('ministry/create/', ministry_registration, name='ministry_registration'),

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "paypal.standard.ipn",
     'payments',
+    'formtools',
 
     'crispy_forms',
     'tinymce.apps.TinyMCEConfig',

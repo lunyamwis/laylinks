@@ -1,16 +1,31 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views import generic
 
 from django.views import View
 
 from evangelism.models import Evangelism, Member, Minister, Ministry
 from users.models import User
+from formtools.wizard.views import WizardView, SessionWizardView
 
 from .forms import (
-    MemberRegistrationForm, MinisterRegistrationForm,
+    MemberRegistrationForm, ChurchMemberDetailsForm, MinisterRegistrationForm,
     MinistryRegistrationForm, EvangelismForm
 )
+FORMS = [("member_details", MemberRegistrationForm),
+         ("church_details", ChurchMemberDetailsForm)]
+
+TEMPLATES = {"0": "evangelism/wizzard.html",
+             "1": "evangelism/wizzard.html", }
+
+
+class MemberRegistrationWizzard(SessionWizardView):
+
+    def get_template_names(self):
+        return [TEMPLATES[self.steps.current]]
+
+    def done(self, form_list, **kwargs):
+        return redirect('/')
 
 
 class MemberRegistration(View):

@@ -64,6 +64,8 @@ class Member(BaseModel):
     name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField()
     password = models.CharField(max_length=1024)
+    password2 = models.CharField(
+        max_length=1024, verbose_name='Confirm Password')
     conference_name = models.CharField(max_length=255)
     field_name = models.CharField(max_length=255)
     home_church_name = models.TextField()
@@ -86,6 +88,8 @@ class Minister(BaseModel):
     name = models.CharField(max_length=255)
     email = models.EmailField()
     password = models.CharField(max_length=1024)
+    password2 = models.CharField(
+        max_length=1024, verbose_name='Confirm Password')
     available = models.BooleanField(default=False)
     contact_assistant_name = models.CharField(max_length=255)
     contact_assistant_email = models.EmailField()
@@ -112,6 +116,8 @@ class Ministry(BaseModel):
     name = models.CharField(max_length=255)
     email = models.EmailField()
     password = models.CharField(max_length=1024)
+    password2 = models.CharField(
+        max_length=1024, verbose_name='Confirm Password')
     location = models.CharField(max_length=255)
     phone_numbers = models.CharField(max_length=200, null=True)
     category = models.CharField(max_length=50, choices=TypeOptions.choices,
