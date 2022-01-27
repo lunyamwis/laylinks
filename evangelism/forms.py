@@ -16,14 +16,6 @@ class MemberRegistrationForm(ModelForm):
 
 
 class ChurchMemberDetailsForm(ModelForm):
-    # conference_name = forms.CharField(max_length=255)
-    # field_name = forms.CharField(max_length=255)
-    # home_church_name = forms.TextField()
-    # home_church_email = forms.EmailField(max_length=254)
-    # home_church_phone_numbers = forms.CharField(max_length=200, null=True)
-    # home_church_location = forms.CharField(max_length=50)
-    # church_elder_name = forms.CharField(max_length=50)
-    # church_elder_email = forms.EmailField(max_length=50)
 
     class Meta:
         model = Member
@@ -38,7 +30,22 @@ class MinisterRegistrationForm(ModelForm):
 
     class Meta:
         model = Minister
-        exclude = ['user', 'fields']
+        fields = ['name', 'email', 'password', 'password2']
+
+
+class ChurchMinisterDetailsForm(ModelForm):
+
+    class Meta:
+        model = Minister
+        fields = ['conference_name', 'home_church_name',
+                  'home_church_email', 'home_church_phone_numbers', 'church_elder_name', 'church_elder_email']
+
+
+class ContactMinisterDetailsForm(ModelForm):
+
+    class Meta:
+        model = Minister
+        fields = ['contact_assistant_name', 'contact_assistant_email']
 
 
 class MinistryRegistrationForm(ModelForm):
@@ -54,11 +61,47 @@ class MinistryRegistrationForm(ModelForm):
 class EvangelismForm(ModelForm):
     class Meta:
         model = Evangelism
-        exclude = [
+        fields = [
+            'field',
+            'event',
+        ]
+
+
+class EventDetails(ModelForm):
+    class Meta:
+        model = Evangelism
+        fields = [
+            'event',
+            'event_name',
+            'event_date',
+            'event_location',
+            'event_purpose',
+            'event_duration',
+            'number_attendees'
+        ]
+
+
+class SermonDetails(ModelForm):
+    class Meta:
+        model = Evangelism
+        fields = [
             'sermon_theme',
             'sermon_length',
-            'number_attendees',
-            'budget',
+        ]
+
+
+class Logistics(ModelForm):
+    class Meta:
+        model = Evangelism
+        fields = [
+            'budget'
+        ]
+
+
+class SurveyForm(ModelForm):
+    class Meta:
+        model = Evangelism
+        fields = [
             'number_converts',
-            'number_followups',
+            'number_followups'
         ]

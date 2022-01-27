@@ -10,19 +10,59 @@ from formtools.wizard.views import WizardView, SessionWizardView
 
 from .forms import (
     MemberRegistrationForm, ChurchMemberDetailsForm, MinisterRegistrationForm,
-    MinistryRegistrationForm, EvangelismForm
+    ChurchMinisterDetailsForm, ContactMinisterDetailsForm,
+    MinistryRegistrationForm, EvangelismForm, EventDetails,
+    SermonDetails, Logistics, SurveyForm
 )
 FORMS = [("member_details", MemberRegistrationForm),
          ("church_details", ChurchMemberDetailsForm)]
 
+MINISTRY_FORMS = [("minister_details", MinistryRegistrationForm),
+                  ("church_details", ChurchMinisterDetailsForm),
+                  ("contact_details", ContactMinisterDetailsForm)]
+
+EVANGELISM_FORMS = [("field_details", EvangelismForm),
+                    ("event_details", EventDetails),
+                    ("sermon_details", SermonDetails),
+                    ("logistic_details", Logistics),
+                    ("survey_details", SurveyForm)]
+
 TEMPLATES = {"0": "evangelism/wizzard.html",
              "1": "evangelism/wizzard.html", }
+
+MINISTRY_TEMPLATES = {"minister_details": "evangelism/wizzard.html",
+                      "church_details": "evangelism/wizzard.html",
+                      "contact_details": "evangelism/wizzard.html", }
+
+EVANGELISM_TEMPLATES = {"field_details": "evangelism/wizzard.html",
+                        "event_details": "evangelism/wizzard.html",
+                        "sermon_details": "evangelism/wizzard.html",
+                        "logistic_details": "evangelism/wizzard.html",
+                        "survey_details": "evangelism/wizzard.html"}
 
 
 class MemberRegistrationWizzard(SessionWizardView):
 
     def get_template_names(self):
         return [TEMPLATES[self.steps.current]]
+
+    def done(self, form_list, **kwargs):
+        return redirect('/')
+
+
+class MinisterRegistrationWizzard(SessionWizardView):
+
+    def get_template_names(self):
+        return [MINISTRY_TEMPLATES[self.steps.current]]
+
+    def done(self, form_list, **kwargs):
+        return redirect('/')
+
+
+class EvangelismWizzard(SessionWizardView):
+
+    def get_template_names(self):
+        return [EVANGELISM_TEMPLATES[self.steps.current]]
 
     def done(self, form_list, **kwargs):
         return redirect('/')

@@ -52,6 +52,7 @@ class Evangelism(BaseModel):
     sermon_theme = models.TextField(null=True, blank=True)
     sermon_length = models.IntegerField(null=True, blank=True)
     number_attendees = models.IntegerField(null=True, blank=True)
+    completed = models.BooleanField(default=False)
     budget = models.FloatField(null=True, blank=True)
     number_converts = models.IntegerField(null=True, blank=True)
     number_followups = models.IntegerField(null=True, blank=True)
