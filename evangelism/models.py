@@ -65,7 +65,7 @@ class Evangelism(BaseModel):
 class Referees(BaseModel):
     name = models.CharField(max_length=1024, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
-    phone_number = PhoneNumberField(blank=True)
+    phone_number = PhoneNumberField()
 
 
 class Member(BaseModel):
@@ -77,7 +77,7 @@ class Member(BaseModel):
     conference_name = models.CharField(max_length=255)
     home_church_name = models.TextField()
     home_church_email = models.EmailField(max_length=254)
-    home_church_phone_numbers = PhoneNumberField(blank=True)
+    home_church_phone_numbers = PhoneNumberField()
     home_church_location = models.CharField(max_length=50)
     church_elder_name = models.CharField(max_length=50)
     church_elder_email = models.EmailField(max_length=50)
@@ -106,7 +106,7 @@ class Minister(BaseModel):
     home_church_email = models.EmailField(max_length=254)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True)
-    home_church_phone_numbers = PhoneNumberField(blank=True)
+    home_church_phone_numbers = PhoneNumberField()
     home_church_location = models.CharField(max_length=50)
     church_elder_name = models.CharField(max_length=50)
     church_elder_email = models.EmailField(max_length=50)
@@ -126,7 +126,7 @@ class Ministry(BaseModel):
     password2 = models.CharField(
         max_length=1024, verbose_name='Confirm Password')
     location = models.CharField(max_length=255)
-    phone_numbers = PhoneNumberField(blank=True)
+    phone_numbers = PhoneNumberField()
     category = models.CharField(max_length=50, choices=TypeOptions.choices,
                                 default=TypeOptions.INDEPENDENT)
     conference_name = models.CharField(max_length=255)
