@@ -192,7 +192,7 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = "users.User"
 
-SITE_ID = 1
+SITE_ID = 4
 
 LOGGING = {
     "version": 1,
