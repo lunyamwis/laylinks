@@ -63,7 +63,12 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERSION': 'v2.4'
 
     },
-    'google': {}, 'twitter': {}}
+    'google':
+    {
+        'SCOPE': ['email'],
+        'AUTH_PARAMS': {'access_type': 'online'}
+    },
+    'twitter': {}}
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MIDDLEWARE = [
