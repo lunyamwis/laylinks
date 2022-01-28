@@ -77,7 +77,7 @@ class Member(BaseModel):
     conference_name = models.CharField(max_length=255)
     home_church_name = models.TextField()
     home_church_email = models.EmailField(max_length=254)
-    home_church_phone_numbers = models.CharField(max_length=200, null=True)
+    home_church_phone_numbers = PhoneNumberField(blank=True)
     home_church_location = models.CharField(max_length=50)
     church_elder_name = models.CharField(max_length=50)
     church_elder_email = models.EmailField(max_length=50)
