@@ -27,6 +27,8 @@ django-environ==0.8.1
 django-formtools==2.3
 django-payments==0.15.0
 django-paypal==1.1.1
+django-phonenumber-field==6.0.0
+django-phonenumbers==1.0.1
 django-restframework==0.0.1
 django-timezone-field==4.2.1
 django-tinymce4-lite==1.7.4
@@ -45,6 +47,7 @@ mccabe==0.6.1
 oauthlib==3.0.1
 packaging==21.3
 pep8==1.7.1
+phonenumbers==8.12.41
 Pillow==7.1.0
 pluggy==1.0.0
 prompt-toolkit==3.0.22

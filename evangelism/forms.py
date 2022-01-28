@@ -19,7 +19,7 @@ class ChurchMemberDetailsForm(ModelForm):
 
     class Meta:
         model = Member
-        fields = ['conference_name', 'field_name', 'home_church_name',
+        fields = ['conference_name', 'home_church_name',
                   'home_church_email', 'home_church_phone_numbers', 'church_elder_name']
 
 

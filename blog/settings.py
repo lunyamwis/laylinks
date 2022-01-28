@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     "paypal.standard.ipn",
     'payments',
     'formtools',
-
+    'phonenumber_field',
+    'phonenumbers',
     'crispy_forms',
     'tinymce.apps.TinyMCEConfig',
 

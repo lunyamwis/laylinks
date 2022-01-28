@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.models import User
+from phonenumber_field.modelfields import PhoneNumberField
 # Create your models here.
 
 
@@ -61,6 +62,12 @@ class Evangelism(BaseModel):
         return self.field
 
 
+class Referees(BaseModel):
+    name = models.CharField(max_length=1024, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    phone_number = PhoneNumberField(blank=True)
+
+
 class Member(BaseModel):
     name = models.CharField(max_length=255, null=True, blank=True)
     email = models.EmailField()
@@ -68,7 +75,6 @@ class Member(BaseModel):
     password2 = models.CharField(
         max_length=1024, verbose_name='Confirm Password')
     conference_name = models.CharField(max_length=255)
-    field_name = models.CharField(max_length=255)
     home_church_name = models.TextField()
     home_church_email = models.EmailField(max_length=254)
     home_church_phone_numbers = models.CharField(max_length=200, null=True)
@@ -100,7 +106,7 @@ class Minister(BaseModel):
     home_church_email = models.EmailField(max_length=254)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True)
-    home_church_phone_numbers = models.CharField(max_length=200, null=True)
+    home_church_phone_numbers = PhoneNumberField(blank=True)
     home_church_location = models.CharField(max_length=50)
     church_elder_name = models.CharField(max_length=50)
     church_elder_email = models.EmailField(max_length=50)
@@ -120,7 +126,7 @@ class Ministry(BaseModel):
     password2 = models.CharField(
         max_length=1024, verbose_name='Confirm Password')
     location = models.CharField(max_length=255)
-    phone_numbers = models.CharField(max_length=200, null=True)
+    phone_numbers = PhoneNumberField(blank=True)
     category = models.CharField(max_length=50, choices=TypeOptions.choices,
                                 default=TypeOptions.INDEPENDENT)
     conference_name = models.CharField(max_length=255)

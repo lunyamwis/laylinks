@@ -27,8 +27,8 @@ EVANGELISM_FORMS = [("field_details", EvangelismForm),
                     ("logistic_details", Logistics),
                     ("survey_details", SurveyForm)]
 
-TEMPLATES = {"0": "evangelism/wizzard.html",
-             "1": "evangelism/wizzard.html", }
+TEMPLATES = {"member_details": "evangelism/wizzard.html",
+             "church_details": "evangelism/wizzard.html", }
 
 MINISTRY_TEMPLATES = {"minister_details": "evangelism/wizzard.html",
                       "church_details": "evangelism/wizzard.html",
