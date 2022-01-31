@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 
 from evangelism.forms import (
     ChurchMemberDetailsForm, EvangelismForm, EventDetails, Logistics, MemberRegistrationForm,
@@ -25,8 +25,8 @@ from .views import (
 
 app_name = "evangelism"
 
-FORMS = [("member_details", MemberRegistrationForm),
-         ("church_details", ChurchMemberDetailsForm)]
+FORMS = (("member_details", MemberRegistrationForm),
+         ("church_details", ChurchMemberDetailsForm))
 
 MINISTRY_FORMS = [("minister_details", MinisterRegistrationForm),
                   ("church_details", ChurchMinisterDetailsForm),
@@ -38,6 +38,17 @@ EVANGELISM_FORMS = [("field_details", EvangelismForm),
                     ("logistic_details", Logistics),
                     ("survey_details", SurveyForm)]
 
+# membership_wizzard = MemberRegistrationWizzard.as_view(
+#     FORMS,
+#     url_name='member_register_wizzard',
+#     done_step_name='finished'
+# )
+
+# urlpatterns = [
+#     re_path(r'^member/(?P<step>.+)/$',
+#             membership_wizzard, name='member_register_wizzard'),
+#     path('member/church_details', membership_wizzard, name='fin'),
+# ]
 urlpatterns = [
     path('member/register/', MemberRegistrationWizzard.as_view(
         FORMS), name='member_register_wizzard'),

@@ -87,9 +87,6 @@ class Member(BaseModel):
     baptized = models.BooleanField(default=True)
     position_church = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.name
-
 
 class Minister(BaseModel):
     name = models.CharField(max_length=255)

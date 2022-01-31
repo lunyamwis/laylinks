@@ -11,8 +11,14 @@ class MemberRegistrationForm(ModelForm):
 
     class Meta:
         model = Member
-        fields = ['name', 'password', 'password2',
+        fields = ['name', 'email', 'password', 'password2',
                   'occupation', 'baptized', 'position_church']
+
+    def clean(self):
+        data = self.cleaned_data
+        if data.get('password') != data.get('password2'):
+            self.add_error('password2', "passwords do not match !")
+        return data
 
 
 class ChurchMemberDetailsForm(ModelForm):

@@ -1,12 +1,19 @@
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.views import generic
 
-from django.views import View
 
+from django.views import View
+from django.forms.models import construct_instance
 from evangelism.models import Evangelism, Member, Minister, Ministry
 from users.models import User
-from formtools.wizard.views import WizardView, SessionWizardView
+from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth import authenticate
+from formtools.wizard.views import (
+    SessionWizardView,
+    NamedUrlWizardView
+)
 
 from .forms import (
     MemberRegistrationForm, ChurchMemberDetailsForm, MinisterRegistrationForm,
@@ -43,10 +50,37 @@ EVANGELISM_TEMPLATES = {"field_details": "evangelism/wizzard.html",
 
 class MemberRegistrationWizzard(SessionWizardView):
 
-    def get_template_names(self):
-        return [TEMPLATES[self.steps.current]]
+    form_list = FORMS
+    template_name = "evangelism/wizzard.html"
 
-    def done(self, form_list, **kwargs):
+    def done(self, form_list, form_dict, ** kwargs):
+        """
+        stepwise form for registering a member to the members database table
+        step 1: save the member details
+        step 2: save the church details
+        """
+        instance = Member()
+        for form in form_list:
+            instance = construct_instance(
+                form, instance, form._meta.fields, form._meta.exclude)
+
+            # check whether the passwords match if they do, then we can hash them
+            if instance.password == instance.password2:
+                instance.password = make_password(instance.password)
+                instance.password2 = make_password(instance.password2)
+            else:
+                form_dict['member_details'].errors['password'] = "Passwords do not match"
+
+        # save the instance to the Members table
+        instance.save()
+
+        # also we open a members account too once is completed registering
+        user = User()
+        user.username = instance.name
+        user.email = instance.email
+        user.password = instance.password
+        user.is_member = True
+        user.save()
         return redirect('/')
 
 
