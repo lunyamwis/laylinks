@@ -1,8 +1,11 @@
+import email
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect, render
 from django.views import generic
-
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 
 from django.views import View
 from django.forms.models import construct_instance
@@ -74,13 +77,40 @@ class MemberRegistrationWizzard(SessionWizardView):
         # save the instance to the Members table
         instance.save()
 
+        # send a confirmation email to the user who has just signed in
+        send_mail(
+            subject="Confirmation Email",
+            message="Please click the link below in order to activate your account\n" +
+            f"{self.request.get_host()}?confirm_email={True}&member={instance.pk}",
+            from_email="tutorialcreation81@gmail.com",
+            recipient_list=[instance.email],
+            fail_silently=False
+        )
+
         # also we open a members account too once is completed registering
-        user = User()
-        user.username = instance.name
-        user.email = instance.email
-        user.password = instance.password
-        user.is_member = True
-        user.save()
+        try:
+            confirm_email = self.request.GET.get('confirm_email')
+            member_pk = self.request.GET.get("member")
+        except Exception as e:
+            messages.error(
+                self.request, message="You have not yet confirmed your email")
+
+        instance = Member.objects.get(pk=member_pk)
+
+        if confirm_email:
+            user = User()
+            user.username = instance.name
+            user.email = instance.email
+            user.password = instance.password
+            user.is_member = True
+            user.save()
+            messages.success(
+                self.request, message="You have successfully activated an account with Laylinks")
+
+        # send a message to assure the individual has successfully signed in
+        messages.success(self.request, message="You have successfully registered as a member of laylinks,\n" +
+                         "we have sent you a confirmation email please confirm")
+
         return redirect('/')
 
 
