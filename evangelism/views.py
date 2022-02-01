@@ -82,34 +82,14 @@ class MemberRegistrationWizzard(SessionWizardView):
             subject="Confirmation Email",
             message="Please click the link below in order to activate your account\n" +
             f"{self.request.get_host()}?confirm_email={True}&member={instance.pk}",
-            from_email="tutorialcreation81@gmail.com",
+            from_email=settings.EMAIL_HOST_USER,
             recipient_list=[instance.email],
             fail_silently=False
         )
 
-        # also we open a members account too once is completed registering
-        try:
-            confirm_email = self.request.GET.get('confirm_email')
-            member_pk = self.request.GET.get("member")
-        except Exception as e:
-            messages.error(
-                self.request, message="You have not yet confirmed your email")
-
-        instance = Member.objects.get(pk=member_pk)
-
-        if confirm_email:
-            user = User()
-            user.username = instance.name
-            user.email = instance.email
-            user.password = instance.password
-            user.is_member = True
-            user.save()
-            messages.success(
-                self.request, message="You have successfully activated an account with Laylinks")
-
         # send a message to assure the individual has successfully signed in
         messages.success(self.request, message="You have successfully registered as a member of laylinks,\n" +
-                         "we have sent you a confirmation email please confirm")
+                         "we have sent you a confirmation email please confirm in order to activate your account")
 
         return redirect('/')
 

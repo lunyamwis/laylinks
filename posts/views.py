@@ -6,6 +6,8 @@ from django.views.generic import View, ListView, DetailView, CreateView, UpdateV
 
 from .forms import CommentForm, PostForm
 from .models import Post, Author, PostView
+from evangelism.models import Member
+from users.models import User
 from marketing.forms import EmailSignupForm
 from marketing.models import Signup
 
@@ -67,6 +69,28 @@ class IndexView(View):
             'latest': latest,
             'form': self.form
         }
+        # also we open a members account too once is completed registering
+        try:
+            confirm_email = self.request.GET.get('confirm_email')
+            member_pk = self.request.GET.get("member")
+        except Exception as e:
+            messages.error(
+                self.request, message="You have not yet confirmed your email")
+
+        instance = Member.objects.filter(pk=member_pk)
+
+        if confirm_email and instance.exists():
+            instance = instance.first()
+            user = User()
+            user.username = instance.name
+            user.email = instance.email
+            user.password = instance.password
+            user.is_member = True
+            user.save()
+            messages.success(
+                self.request, message="You have successfully activated an account with Laylinks")
+            return redirect('/')
+
         return render(request, 'index.html', context)
 
     def post(self, request, *args, **kwargs):
