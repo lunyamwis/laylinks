@@ -40,12 +40,6 @@
           </li>
           <li class="nav-item"><a href="{% url 'core:home' %}" class="nav-link ">Shop</a>
           </li>
-          <li class="nav-item"><a href="{% url 'evangelism:ministers' %}" class="nav-link ">Ministers</a>
-          </li>
-          <li class="nav-item"><a href="{% url 'evangelism:ministries' %}" class="nav-link ">Ministries</a>
-          </li>
-          <li class="nav-item"><a href="{% url 'evangelism:fields' %}" class="nav-link ">Events</a>
-          </li>
           {% if request.user.is_staff %}
           <li class="nav-item"><a href="{% url 'post-create' %}" class="nav-link ">Create</a>
           </li>
