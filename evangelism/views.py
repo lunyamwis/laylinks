@@ -1,62 +1,60 @@
-import email
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.shortcuts import redirect, render
-from django.views import generic
-from django.contrib import messages
-from django.core.mail import send_mail
+"""
+Date: 01/02/2022
+Author: Martin Luther Bironga
+Purpose: Evangelism Registrations and Workflows
+"""
 from django.conf import settings
-
-from django.views import View
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.core.mail import send_mail
 from django.forms.models import construct_instance
+from django.shortcuts import redirect, render
+from formtools.wizard.views import SessionWizardView
+
 from evangelism.models import Evangelism, Member, Minister, Ministry
-from users.models import User
-from django.contrib.auth.hashers import check_password, make_password
-from django.contrib.auth import authenticate
-from formtools.wizard.views import (
-    SessionWizardView,
-    NamedUrlWizardView
-)
 
 from .forms import (
-    MemberRegistrationForm, ChurchMemberDetailsForm, MinisterRegistrationForm,
-    ChurchMinisterDetailsForm, ContactMinisterDetailsForm,
-    MinistryRegistrationForm, EvangelismForm, EventDetails,
-    SermonDetails, Logistics, SurveyForm
+    ChurchMemberDetailsForm,
+    ChurchMinisterDetailsForm,
+    ContactMinisterDetailsForm,
+    EvangelismForm,
+    EventDetails,
+    Logistics,
+    MemberRegistrationForm,
+    MinistryRegistrationForm,
+    SermonDetails,
+    SurveyForm,
 )
-FORMS = [("member_details", MemberRegistrationForm),
-         ("church_details", ChurchMemberDetailsForm)]
 
-MINISTRY_FORMS = [("minister_details", MinistryRegistrationForm),
-                  ("church_details", ChurchMinisterDetailsForm),
-                  ("contact_details", ContactMinisterDetailsForm)]
+FORMS = [
+    ("member_details", MemberRegistrationForm),
+    ("church_details", ChurchMemberDetailsForm),
+]
 
-EVANGELISM_FORMS = [("field_details", EvangelismForm),
-                    ("event_details", EventDetails),
-                    ("sermon_details", SermonDetails),
-                    ("logistic_details", Logistics),
-                    ("survey_details", SurveyForm)]
+MINISTER_FORMS = [
+    ("minister_details", MinistryRegistrationForm),
+    ("church_details", ChurchMinisterDetailsForm),
+    ("contact_details", ContactMinisterDetailsForm),
+]
 
-TEMPLATES = {"member_details": "evangelism/wizzard.html",
-             "church_details": "evangelism/wizzard.html", }
+MINISTRY_FORMS = [("ministry_details", MinistryRegistrationForm)]
 
-MINISTRY_TEMPLATES = {"minister_details": "evangelism/wizzard.html",
-                      "church_details": "evangelism/wizzard.html",
-                      "contact_details": "evangelism/wizzard.html", }
-
-EVANGELISM_TEMPLATES = {"field_details": "evangelism/wizzard.html",
-                        "event_details": "evangelism/wizzard.html",
-                        "sermon_details": "evangelism/wizzard.html",
-                        "logistic_details": "evangelism/wizzard.html",
-                        "survey_details": "evangelism/wizzard.html"}
+EVANGELISM_FORMS = [
+    ("field_details", EvangelismForm),
+    ("event_details", EventDetails),
+    ("sermon_details", SermonDetails),
+    ("logistic_details", Logistics),
+    ("survey_details", SurveyForm),
+]
 
 
 class MemberRegistrationWizzard(SessionWizardView):
+    """this class is for registering a member"""
 
     form_list = FORMS
     template_name = "evangelism/wizzard.html"
 
-    def done(self, form_list, form_dict, ** kwargs):
+    def done(self, form_list, form_dict):
         """
         stepwise form for registering a member to the members database table
         step 1: save the member details
@@ -65,14 +63,17 @@ class MemberRegistrationWizzard(SessionWizardView):
         instance = Member()
         for form in form_list:
             instance = construct_instance(
-                form, instance, form._meta.fields, form._meta.exclude)
+                form, instance, form._meta.fields, form._meta.exclude
+            )
 
             # check whether the passwords match if they do, then we can hash them
             if instance.password == instance.password2:
                 instance.password = make_password(instance.password)
                 instance.password2 = make_password(instance.password2)
             else:
-                form_dict['member_details'].errors['password'] = "Passwords do not match"
+                form_dict["member_details"].errors[
+                    "password"
+                ] = "Passwords do not match"
 
         # save the instance to the Members table
         instance.save()
@@ -80,177 +81,137 @@ class MemberRegistrationWizzard(SessionWizardView):
         # send a confirmation email to the user who has just signed in
         send_mail(
             subject="Confirmation Email",
-            message="Please click the link below in order to activate your account\n" +
-            f"{self.request.get_host()}?confirm_email={True}&member={instance.pk}",
+            message="Please click the link below in order to activate your account\n"
+            + f"{self.request.get_host()}?confirm_email={True}&member={instance.pk}",
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[instance.email],
-            fail_silently=False
+            fail_silently=False,
         )
 
         # send a message to assure the individual has successfully signed in
-        messages.success(self.request, message="You have successfully registered as a member of laylinks,\n" +
-                         "we have sent you a confirmation email please confirm in order to activate your account")
+        messages.success(
+            self.request,
+            message="You have successfully registered as a member of laylinks,\n"
+            + "we have sent you a confirmation email please confirm in order to"
+            + " activate your account",
+        )
 
-        return redirect('/')
+        return redirect("/")
 
 
 class MinisterRegistrationWizzard(SessionWizardView):
+    """this class is for registering a minister"""
 
-    def get_template_names(self):
-        return [MINISTRY_TEMPLATES[self.steps.current]]
+    form_list = MINISTER_FORMS
+    template_name = "evangelism/wizzard.html"
 
-    def done(self, form_list, **kwargs):
-        return redirect('/')
+    def done(self, form_list, form_dict):
+        """
+        stepwise form for registering a minister to the ministers database table
+        step 1: save the minister details
+        step 2: save the church details
+        """
+        instance = Minister()
+        for form in form_list:
+            instance = construct_instance(
+                form, instance, form._meta.fields, form._meta.exclude
+            )
+
+            # check whether the passwords match if they do, then we can hash them
+            if instance.password == instance.password2:
+                instance.password = make_password(instance.password)
+                instance.password2 = make_password(instance.password2)
+            else:
+                form_dict["minister_details"].errors[
+                    "password"
+                ] = "Passwords do not match"
+
+        # save the instance to the Members table
+        instance.save()
+
+        # send a confirmation email to the user who has just signed in
+        send_mail(
+            subject="Confirmation Email",
+            message="Please click the link below in order to activate your account\n"
+            + f"{self.request.get_host()}?confirm_email={True}&minister={instance.pk}",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[instance.email],
+            fail_silently=False,
+        )
+
+        # send a message to assure the individual has successfully signed in
+        messages.success(
+            self.request,
+            message="You have successfully registered as a minister in laylinks,\n"
+            + "we have sent you a confirmation email"
+            + " please confirm in order to activate your account",
+        )
+        return redirect("/")
+
+
+class MinistryRegistrationWizzard(SessionWizardView):
+    """this class is for registering a ministry"""
+
+    form_list = MINISTRY_FORMS
+    template_name = "evangelism/wizzard.html"
+
+    def done(self, form_list, form_dict):
+        """
+        stepwise form for registering a minister to the ministers database table
+        step 1: save the minister details
+        step 2: save the church details
+        """
+        instance = Ministry()
+        for form in form_list:
+            instance = construct_instance(
+                form, instance, form._meta.fields, form._meta.exclude
+            )
+
+            # check whether the passwords match if they do, then we can hash them
+            if instance.password == instance.password2:
+                instance.password = make_password(instance.password)
+                instance.password2 = make_password(instance.password2)
+            else:
+                form_dict["ministry_details"].errors[
+                    "password"
+                ] = "Passwords do not match"
+
+        # save the instance to the Members table
+        instance.save()
+
+        # send a confirmation email to the user who has just signed in
+        send_mail(
+            subject="Confirmation Email",
+            message="Please click the link below in order to activate your account\n"
+            + f"{self.request.get_host()}?confirm_email={True}&ministry={instance.pk}",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[instance.email],
+            fail_silently=False,
+        )
+
+        # send a message to assure the individual has successfully signed in
+        messages.success(
+            self.request,
+            message="You have successfully registered as a ministry in laylinks,\n"
+            + "we have sent you a confirmation email "
+            + "please confirm in order to activate your account",
+        )
+        return redirect("/")
 
 
 class EvangelismWizzard(SessionWizardView):
+    """this class is for taking a member through inviting a minister or ministry"""
 
-    def get_template_names(self):
-        return [EVANGELISM_TEMPLATES[self.steps.current]]
-
-    def done(self, form_list, **kwargs):
-        return redirect('/')
-
-
-class MemberRegistration(View):
-    form_class = MemberRegistrationForm
-    initial = {'key': 'value'}
-    template_name = 'evangelism/form.html'
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            form.save()
-            user = User()
-            user.username = form.instance.name
-            user.email = form.instance.email
-            user.password = form.instance.password
-            user.is_member = True
-            user.save()
-            return HttpResponseRedirect('/')
-
-        return render(request, self.template_name, {'form': form})
+    def done(self):
+        """this functions manipulates the invitation form"""
+        return redirect("/")
 
 
-class MinisterRegistration(View):
-    form_class = MinisterRegistrationForm
-    initial = {'key': 'value'}
-    template_name = 'evangelism/form.html'
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            form.save()
-            user = User()
-            user.username = form.instance.name
-            user.email = form.instance.email
-            user.password = form.instance.password
-            user.is_minister = True
-            user.save()
-            return HttpResponseRedirect('/')
-
-        return render(request, self.template_name, {'form': form})
-
-
-class MinisterListView(generic.ListView):
-    template_name = "evangelism/list.html"
-    queryset = Minister.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = {}
-        context['data'] = 'minister'
-        context['object_list'] = self.queryset
-        return context
-
-
-class MinisterDetailView(generic.DetailView):
-    template_name = "evangelism/detail.html"
-    queryset = Minister.objects.all()
-
-
-class MinistryRegistration(View):
-    form_class = MinistryRegistrationForm
-    initial = {'key': 'value'}
-    template_name = 'evangelism/form.html'
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            form.save()
-            user = User()
-            user.username = form.instance.name
-            user.email = form.instance.email
-            user.password = form.instance.password
-            user.is_ministry = True
-            user.save()
-            return HttpResponseRedirect('/')
-
-        return render(request, self.template_name, {'form': form})
-
-
-class MinistryListView(generic.ListView):
-    template_name = "evangelism/list.html"
-    queryset = Ministry.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = {}
-        context['data'] = 'ministry'
-        context['object_list'] = self.queryset
-        return context
-
-
-class MinistryDetailView(generic.DetailView):
-    template_name = "evangelism/detail.html"
-    queryset = Ministry.objects.all()
-
-
-class FieldRegistration(View):
-    form_class = EvangelismForm
-    initial = {'key': 'value'}
-    template_name = 'evangelism/form.html'
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect('/')
-
-        return render(request, self.template_name, {'form': form})
-
-
-class FieldListView(generic.ListView):
-    template_name = "evangelism/list.html"
-    queryset = Evangelism.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = {}
-        context['data'] = 'field'
-        context['object_list'] = self.queryset
-        return context
-
-
-def field_detail(request, *args, **kwargs):
-    name = kwargs['name']
-    if Minister.objects.filter(
-            name=name).exists():
-        minister_ry = Minister.objects.get(
-            name=name)
+def field_detail(request, **kwargs):
+    """this function gives us another approach of manipulating the invitation form"""
+    name = kwargs["name"]
+    if Minister.objects.filter(name=name).exists():
+        minister_ry = Minister.objects.get(name=name)
     else:
         minister_ry = Ministry.objects.get(name=name)
     form = EvangelismForm(request.POST or None)
@@ -258,15 +219,4 @@ def field_detail(request, *args, **kwargs):
         form.save()
         field = Evangelism.objects.get(id=form.instance.pk)
         minister_ry.fields.add(field)
-    return render(request, "evangelism/form.html", {
-        "form": form
-    })
-
-
-"""
-class based views representations of the namespaces below
-"""
-member_registration = MemberRegistration.as_view()
-minister_registration = MinisterRegistration.as_view()
-ministry_registration = MinistryRegistration.as_view()
-field_registration = FieldRegistration.as_view()
+    return render(request, "evangelism/form.html", {"form": form})

@@ -1,0 +1,25 @@
+# Pylint settings at:
+# http://pylint.pycqa.org/en/latest/technical_reference/features.html
+
+[MASTER]
+profile = no
+persistent = no
+ignore = codegen
+
+
+[IMPORTS]
+deprecated-modules=ujson
+
+[VARIABLES]
+# Tells whether we should check for unused import in __init__ files.
+init-import=no
+
+[MESSAGES CONTROL]
+disable=
+    E0401, # unable to import module
+    R0903, # too few public methods
+    R0201, # Method could be a function (no-self-use)
+    W0621, # Redefining name 'form' from outer scope (line 21) (redefined-outer-name)
+    C0103, # Constant name "app_name" doesn't conform to UPPER_CASE naming style (invalid-name)
+    W0212, # Access to a protected member _meta of a client class (protected-access)
+    R0801, # Similar lines in 2 files

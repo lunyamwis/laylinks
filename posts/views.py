@@ -1,86 +1,105 @@
-from django.db.models import Count, Q
+"""
+Date: 01/02/2022
+Author: Martin Luther Bironga
+Purpose: Publishing of Posts and Management of Posts
+"""
 from django.contrib import messages
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render, get_object_or_404, redirect, reverse
-from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Count, Q
+from django.shortcuts import redirect, render, reverse
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+    View,
+)
 
-from .forms import CommentForm, PostForm
-from .models import Post, Author, PostView
-from evangelism.models import Member
-from users.models import User
+from evangelism.models import Member, Minister, Ministry
 from marketing.forms import EmailSignupForm
 from marketing.models import Signup
+from users.models import User
+
+from .forms import CommentForm, PostForm
+from .models import Author, Post, PostView
 
 form = EmailSignupForm()
 
 
 def get_author(user):
-    qs = Author.objects.filter(user=user)
-    if qs.exists():
-        return qs[0]
+    """collects the author from the model"""
+    query = Author.objects.filter(user=user)
+    if query.exists():
+        return query[0]
     return None
 
 
 class SearchView(View):
-    def get(self, request, *args, **kwargs):
+    """this feature is meant to search through a variety of content"""
+
+    def get(self, request):
+        """this feature is meant to search through a variety of content"""
         queryset = Post.objects.all()
-        query = request.GET.get('q')
+        query = request.GET.get("q")
         if query:
             queryset = queryset.filter(
-                Q(title__icontains=query) |
-                Q(overview__icontains=query)
+                Q(title__icontains=query) | Q(overview__icontains=query)
             ).distinct()
-        context = {
-            'queryset': queryset
-        }
-        return render(request, 'search_results.html', context)
+        context = {"queryset": queryset}
+        return render(request, "search_results.html", context)
 
 
 def search(request):
+    """this feature is meant to search through a variety of content"""
     queryset = Post.objects.all()
-    query = request.GET.get('q')
+    query = request.GET.get("q")
     if query:
         queryset = queryset.filter(
-            Q(title__icontains=query) |
-            Q(overview__icontains=query)
+            Q(title__icontains=query) | Q(overview__icontains=query)
         ).distinct()
-    context = {
-        'queryset': queryset
-    }
-    return render(request, 'search_results.html', context)
+    context = {"queryset": queryset}
+    return render(request, "search_results.html", context)
 
 
 def get_category_count():
-    queryset = Post \
-        .objects \
-        .values('categories__title') \
-        .annotate(Count('categories__title'))
+    """this feature is meant to return how many categories belonging to a post"""
+    queryset = Post.objects.values("categories__title").annotate(
+        Count("categories__title")
+    )
     return queryset
 
 
 class IndexView(View):
+    """this class returns for us the home view"""
+
     form = EmailSignupForm()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
+        """this function returns featured posts, and activation of accounts"""
         featured = Post.objects.filter(featured=True)
-        latest = Post.objects.order_by('-timestamp')[0:3]
-        context = {
-            'object_list': featured,
-            'latest': latest,
-            'form': self.form
-        }
+        latest = Post.objects.order_by("-timestamp")[0:3]
+        context = {"object_list": featured, "latest": latest, "form": self.form}
         # also we open a members account too once is completed registering
         try:
-            confirm_email = self.request.GET.get('confirm_email')
+            confirm_email = self.request.GET.get("confirm_email")
             member_pk = self.request.GET.get("member")
-        except Exception as e:
-            messages.error(
-                self.request, message="You have not yet confirmed your email")
+            minister_pk = self.request.GET.get("minister")
+            ministry_pk = self.request.GET.get("ministry")
+        except ObjectDoesNotExist as message_:
+            messages.error(self.request, message=message_)
 
         instance = Member.objects.filter(pk=member_pk)
+        minister_instance = Minister.objects.filter(pk=minister_pk)
+        ministry_instance = Ministry.objects.filter(pk=ministry_pk)
 
-        if confirm_email and instance.exists():
-            instance = instance.first()
+        if confirm_email:
+            if instance.exists():
+                instance = instance.first()
+            elif minister_instance.exists():
+                instance = minister_instance.first()
+            else:
+                instance = ministry_instance.first()
             user = User()
             user.username = instance.name
             user.email = instance.email
@@ -88,12 +107,15 @@ class IndexView(View):
             user.is_member = True
             user.save()
             messages.success(
-                self.request, message="You have successfully activated an account with Laylinks")
-            return redirect('/')
+                self.request,
+                message="You have successfully activated an account with Laylinks",
+            )
+            return redirect("/")
 
-        return render(request, 'index.html', context)
+        return render(request, "index.html", context)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
+        """this function signs up an individual and allocates him/her a subscription"""
         email = request.POST.get("email")
         new_signup = Signup()
         new_signup.email = email
@@ -102,219 +124,116 @@ class IndexView(View):
         return redirect("home")
 
 
-def index(request):
-    featured = Post.objects.filter(featured=True)
-    latest = Post.objects.order_by('-timestamp')[0:3]
-
-    if request.method == "POST":
-        email = request.POST["email"]
-        new_signup = Signup()
-        new_signup.email = email
-        new_signup.save()
-
-    context = {
-        'object_list': featured,
-        'latest': latest,
-        'form': form
-    }
-    return render(request, 'index.html', context)
-
-
 def about(request):
+    """this function simply returns the about us page"""
     context = {
-        'about': True,
+        "about": True,
     }
-    return render(request, 'about.html', context)
+    return render(request, "about.html", context)
 
 
 class PostListView(ListView):
+    """this class returns a list of posts"""
+
     form = EmailSignupForm()
     model = Post
-    template_name = 'blog.html'
-    context_object_name = 'queryset'
+    template_name = "blog.html"
+    context_object_name = "queryset"
     paginate_by = 1
 
     def get_context_data(self, **kwargs):
+        """this function does further filter on the posts as they are being listed"""
         category_count = get_category_count()
-        most_recent = Post.objects.order_by('-timestamp')[:3]
+        most_recent = Post.objects.order_by("-timestamp")[:3]
         context = super().get_context_data(**kwargs)
-        context['most_recent'] = most_recent
-        context['page_request_var'] = "page"
-        context['category_count'] = category_count
-        context['form'] = self.form
+        context["most_recent"] = most_recent
+        context["page_request_var"] = "page"
+        context["category_count"] = category_count
+        context["form"] = self.form
         return context
-
-
-def post_list(request):
-    category_count = get_category_count()
-    most_recent = Post.objects.order_by('-timestamp')[:3]
-    post_list = Post.objects.all()
-    paginator = Paginator(post_list, 4)
-    page_request_var = 'page'
-    page = request.GET.get(page_request_var)
-    try:
-        paginated_queryset = paginator.page(page)
-    except PageNotAnInteger:
-        paginated_queryset = paginator.page(1)
-    except EmptyPage:
-        paginated_queryset = paginator.page(paginator.num_pages)
-
-    context = {
-        'queryset': paginated_queryset,
-        'most_recent': most_recent,
-        'page_request_var': page_request_var,
-        'category_count': category_count,
-        'form': form
-    }
-    return render(request, 'blog.html', context)
 
 
 class PostDetailView(DetailView):
+    """this class returns the details of each post"""
+
     model = Post
-    template_name = 'post.html'
-    context_object_name = 'post'
+    template_name = "post.html"
+    context_object_name = "post"
     form = CommentForm()
 
     def get_object(self):
+        """this function returns the post as an object"""
         obj = super().get_object()
         if self.request.user.is_authenticated:
-            PostView.objects.get_or_create(
-                user=self.request.user,
-                post=obj
-            )
+            PostView.objects.get_or_create(user=self.request.user, post=obj)
         return obj
 
     def get_context_data(self, **kwargs):
+        """this function does further filtering on the posts"""
         category_count = get_category_count()
-        most_recent = Post.objects.order_by('-timestamp')[:3]
+        most_recent = Post.objects.order_by("-timestamp")[:3]
         context = super().get_context_data(**kwargs)
-        context['most_recent'] = most_recent
-        context['page_request_var'] = "page"
-        context['category_count'] = category_count
-        context['form'] = self.form
+        context["most_recent"] = most_recent
+        context["page_request_var"] = "page"
+        context["category_count"] = category_count
+        context["form"] = self.form
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
+        """this function allows for addition of comments"""
         form = CommentForm(request.POST)
         if form.is_valid():
             post = self.get_object()
             form.instance.user = request.user
             form.instance.post = post
             form.save()
-            return redirect(reverse("post-detail", kwargs={
-                'pk': post.pk
-            }))
-
-
-def post_detail(request, id):
-    category_count = get_category_count()
-    most_recent = Post.objects.order_by('-timestamp')[:3]
-    post = get_object_or_404(Post, id=id)
-
-    if request.user.is_authenticated:
-        PostView.objects.get_or_create(user=request.user, post=post)
-
-    form = CommentForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            form.instance.user = request.user
-            form.instance.post = post
-            form.save()
-            return redirect(reverse("post-detail", kwargs={
-                'id': post.pk
-            }))
-    context = {
-        'post': post,
-        'most_recent': most_recent,
-        'category_count': category_count,
-        'form': form
-    }
-    return render(request, 'post.html', context)
+            return redirect(reverse("post-detail", kwargs={"pk": post.pk}))
+        return None
 
 
 class PostCreateView(CreateView):
+    """this class creates a brand new post"""
+
     model = Post
-    template_name = 'post_create.html'
+    template_name = "post_create.html"
     form_class = PostForm
 
     def get_context_data(self, **kwargs):
+        """this function returns the create flag"""
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Create'
+        context["title"] = "Create"
         return context
 
     def form_valid(self, form):
+        """this function saves the data obtained from the form"""
         form.instance.author = get_author(self.request.user)
         form.save()
-        return redirect(reverse("post-detail", kwargs={
-            'pk': form.instance.pk
-        }))
-
-
-def post_create(request):
-    title = 'Create'
-    form = PostForm(request.POST or None, request.FILES or None)
-    author = get_author(request.user)
-    if request.method == "POST":
-        if form.is_valid():
-            form.instance.author = author
-            form.save()
-            return redirect(reverse("post-detail", kwargs={
-                'id': form.instance.id
-            }))
-    context = {
-        'title': title,
-        'form': form
-    }
-    return render(request, "post_create.html", context)
+        return redirect(reverse("post-detail", kwargs={"pk": form.instance.pk}))
 
 
 class PostUpdateView(UpdateView):
+    """this class is meant to update a post"""
+
     model = Post
-    template_name = 'post_create.html'
+    template_name = "post_create.html"
     form_class = PostForm
 
     def get_context_data(self, **kwargs):
+        """this function returns the update flag"""
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Update'
+        context["title"] = "Update"
         return context
 
     def form_valid(self, form):
+        """this function is the one that does the literal saving"""
         form.instance.author = get_author(self.request.user)
         form.save()
-        return redirect(reverse("post-detail", kwargs={
-            'pk': form.instance.pk
-        }))
-
-
-def post_update(request, id):
-    title = 'Update'
-    post = get_object_or_404(Post, id=id)
-    form = PostForm(
-        request.POST or None,
-        request.FILES or None,
-        instance=post)
-    author = get_author(request.user)
-    if request.method == "POST":
-        if form.is_valid():
-            form.instance.author = author
-            form.save()
-            return redirect(reverse("post-detail", kwargs={
-                'id': form.instance.id
-            }))
-    context = {
-        'title': title,
-        'form': form
-    }
-    return render(request, "post_create.html", context)
+        return redirect(reverse("post-detail", kwargs={"pk": form.instance.pk}))
 
 
 class PostDeleteView(DeleteView):
+    """this class deletes a post"""
+
     model = Post
-    success_url = '/blog'
-    template_name = 'post_confirm_delete.html'
-
-
-def post_delete(request, id):
-    post = get_object_or_404(Post, id=id)
-    post.delete()
-    return redirect(reverse("post-list"))
+    success_url = "/blog"
+    template_name = "post_confirm_delete.html"
