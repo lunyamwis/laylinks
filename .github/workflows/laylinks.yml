@@ -6,21 +6,17 @@ on:
   pull_request:
     branches: [ main ]
 
-
-
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    environment:
-      name: LAYLINKS
-      url: https://github.com
     strategy:
       max-parallel: 4
       matrix:
         python-version: [3.8]
         node-version: [14.x]
-
+    environment:
+      name: LAYLINKS
 
     steps:
     - uses: actions/checkout@v2
@@ -33,8 +29,28 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
-
       run: |
+        export CELERY_BROKER_URL={{ $LAYLINKS.CELERY_BROKER_URL }}
+        export DATABASE_URL={{ $LAYLINKS.DATABASE_URL }}
+        export DISABLE_COLLECTSTATIC={{ $LAYLINKS.DISABLE_COLLECTSTATIC }}
+        export MAILCHIMP_API_KEY={{ $LAYLINKS.MAILCHIMP_API_KEY }}
+        export MAILCHIMP_DATA_CENTER={{ $LAYLINKS.MAILCHIMP_DATA_CENTER }}
+        export MAILCHIMP_EMAIL_LIST_ID={{ $LAYLINKS.MAILCHIMP_EMAIL_LIST_ID }}
+        export PAYPAL_CLIENT={{ $LAYLINKS.PAYPAL_CLIENT }}
+        export PAYPAL_SECRET={{ $LAYLINKS.PAYPAL_SECRET }}
+        export PORT={{ $LAYLINKS.PORT }}
+        export REDIS_TLS_URL={{ $LAYLINKS.REDIS_TLS_URL }}
+        export REDIS_URL={{ $LAYLINKS.REDIS_URL }}
+        export STRIPE_PUBLIC_KEY={{ $LAYLINKS.STRIPE_PUBLIC_KEY }}
+        export STRIPE_SECRET_KEY={{ $LAYLINKS.STRIPE_SECRET_KEY }}
+        export STRIPE_WEBHOOK_SECRET={{ $LAYLINKS.STRIPE_WEBHOOK_SECRET }}
+        export EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+        export EMAIL_HOST_USER={{ $LAYLINKS.EMAIL_HOST_USER }}
+        export EMAIL_HOST_PASSWORD={{ $LAYLINKS.EMAIL_HOST_PASSWORD }}
+        export EMAIL_HOST={{ $LAYLINKS.EMAIL_HOST }}
+        export EMAIL_USE_TLS={{ $LAYLINKS.EMAIL_USE_TLS }}
+        export EMAIL_PORT={{ $LAYLINKS.EMAIL_PORT }}
+
         python manage.py test
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
