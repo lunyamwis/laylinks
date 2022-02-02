@@ -3,12 +3,15 @@ Date: 01/02/2022
 Author: Martin Luther Bironga
 Purpose: Evangelism Registrations and Workflows
 """
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.forms.models import construct_instance
 from django.shortcuts import redirect, render
+from django.utils import timezone
+from django.views.generic.list import ListView
 from formtools.wizard.views import SessionWizardView
 
 from evangelism.models import Evangelism, Member, Minister, Ministry
@@ -99,6 +102,21 @@ class MemberRegistrationWizzard(SessionWizardView):
         return redirect("/")
 
 
+class MemberListView(ListView):
+    """this class is meant to enlist the members"""
+
+    model = Member
+    paginate_by = 15
+    template_name = "evangelism/list.html"
+
+    def get_context_data(self, **kwargs):
+        """this function helps assign variables to the jinja templates"""
+        context = super().get_context_data(**kwargs)
+        context["now"] = timezone.now()
+        context["data"] = "member"
+        return context
+
+
 class MinisterRegistrationWizzard(SessionWizardView):
     """this class is for registering a minister"""
 
@@ -149,6 +167,21 @@ class MinisterRegistrationWizzard(SessionWizardView):
         return redirect("/")
 
 
+class MinisterListView(ListView):
+    """this class is meant to enlist the ministers"""
+
+    model = Minister
+    paginate_by = 15
+    template_name = "evangelism/list.html"
+
+    def get_context_data(self, **kwargs):
+        """this function helps assign variables to the jinja templates"""
+        context = super().get_context_data(**kwargs)
+        context["now"] = timezone.now()
+        context["data"] = "minister"
+        return context
+
+
 class MinistryRegistrationWizzard(SessionWizardView):
     """this class is for registering a ministry"""
 
@@ -197,6 +230,21 @@ class MinistryRegistrationWizzard(SessionWizardView):
             + "please confirm in order to activate your account",
         )
         return redirect("/")
+
+
+class MinistryListView(ListView):
+    """this class is meant to enlist the ministries"""
+
+    model = Ministry
+    paginate_by = 15
+    template_name = "evangelism/list.html"
+
+    def get_context_data(self, **kwargs):
+        """this function helps assign variables to the jinja templates"""
+        context = super().get_context_data(**kwargs)
+        context["now"] = timezone.now()
+        context["data"] = "ministry"
+        return context
 
 
 class EvangelismWizzard(SessionWizardView):
