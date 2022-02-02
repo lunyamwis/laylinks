@@ -113,7 +113,7 @@ class MemberListView(ListView):
         """this function helps assign variables to the jinja templates"""
         context = super().get_context_data(**kwargs)
         context["now"] = timezone.now()
-        context["data"] = "member"
+        context["data"] = "members"
         return context
 
 
