@@ -15,8 +15,7 @@ jobs:
       matrix:
         python-version: [3.8]
         node-version: [14.x]
-    environment:
-      name: LAYLINKS
+    environment: LAYLINKS
 
     steps:
     - uses: actions/checkout@v2
@@ -29,21 +28,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
+
       run: |
-        export CELERY_BROKER_URL="redis://:pddcf47bcdffc5a783dcb50a9d25126d39d3ce16806f539d8800e91cc31271390@ec2-52-22-187-205.compute-1.amazonaws.com:26430"
-        export DATABASE_URL='postgres://iuefryhwwqtkzc:88ce13173ac1e69acf5a27b3016802f36f1231bbf0edc8de9a5a6363cd4bae8f@ec2-54-198-213-75.compute-1.amazonaws.com:5432/dfinpkoagmvals'
-        export DISABLE_COLLECTSTATIC=1
-        export MAILCHIMP_API_KEY='6b76781532e68e0a0760162abe2635a5-us20'
-        export MAILCHIMP_DATA_CENTER='us20'
-        export MAILCHIMP_EMAIL_LIST_ID='65263eee5c'
-        export PAYPAL_CLIENT='AV-yIwZ1ahGKCXg9gnHxxoZJ9wdA46Epb-LtSDWv6-af5ZB6oTLmE5K4tQSe9mDTMbyqS9k_tNlvgKrz'
-        export PAYPAL_SECRET='EEEuiKlO7wm2m0A1XmnHaRkUqHTNx8UFM1ckRPMk5HwHn7QbbPBAjOkv0zrs2f4wTLQiyetzxQ74g1ZT'
-        export PORT=8000
-        export REDIS_TLS_URL='rediss://:pddcf47bcdffc5a783dcb50a9d25126d39d3ce16806f539d8800e91cc31271390@ec2-3-226-194-254.compute-1.amazonaws.com:21720'
-        export REDIS_URL='redis://:pddcf47bcdffc5a783dcb50a9d25126d39d3ce16806f539d8800e91cc31271390@ec2-3-226-194-254.compute-1.amazonaws.com:21719'
-        export STRIPE_PUBLIC_KEY='ASDF'
-        export STRIPE_SECRET_KEY='ACWE'
-        export STRIPE_WEBHOOK_SECRET='asfdxc'
         python manage.py test
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
