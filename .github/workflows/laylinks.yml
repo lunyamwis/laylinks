@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+
+environment:
+  name: LAYLINKS
+
+
 jobs:
   build:
 
@@ -15,7 +20,7 @@ jobs:
       matrix:
         python-version: [3.8]
         node-version: [14.x]
-    environment: LAYLINKS
+
 
     steps:
     - uses: actions/checkout@v2
