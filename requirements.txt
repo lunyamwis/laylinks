@@ -28,8 +28,6 @@ django-crispy-forms==1.13.0
 django-discover-runner==1.0
 django-environ==0.8.1
 django-formtools==2.3
-django-payments==0.15.0
-django-paypal==1.1.1
 django-phonenumber-field==6.0.0
 django-phonenumbers==1.0.1
 django-restframework==0.0.1

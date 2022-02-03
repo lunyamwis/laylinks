@@ -23,3 +23,6 @@ disable=
     C0103, # Constant name "app_name" doesn't conform to UPPER_CASE naming style (invalid-name)
     W0212, # Access to a protected member _meta of a client class (protected-access)
     R0801, # Similar lines in 2 files
+    C0114, # Missing module docstring (missing-module-docstring)
+    C0115, # Missing class docstring (missing-class-docstring)
+    C0116, # Missing function or method docstring (missing-function-docstring)

@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rolepermissions",
     "rest_framework.authtoken",
-    "paypal.standard.ipn",
     "payments",
     "formtools",
     "phonenumber_field",
