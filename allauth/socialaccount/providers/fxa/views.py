@@ -6,11 +6,7 @@ from allauth.socialaccount.providers.oauth2.views import (
     OAuth2LoginView,
 )
 
-from .provider import (
-    FXA_OAUTH_ENDPOINT,
-    FXA_PROFILE_ENDPOINT,
-    FirefoxAccountsProvider,
-)
+from .provider import FXA_OAUTH_ENDPOINT, FXA_PROFILE_ENDPOINT, FirefoxAccountsProvider
 
 
 class FirefoxAccountsOAuth2Adapter(OAuth2Adapter):

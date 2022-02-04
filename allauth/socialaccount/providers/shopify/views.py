@@ -1,6 +1,6 @@
 import re
-import requests
 
+import requests
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 

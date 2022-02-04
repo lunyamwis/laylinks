@@ -1,6 +1,6 @@
-import requests
 from hashlib import md5
 
+import requests
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils.http import urlencode

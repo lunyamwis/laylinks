@@ -1,9 +1,9 @@
 import hashlib
 import hmac
 import logging
-import requests
 from datetime import timedelta
 
+import requests
 from django.utils import timezone
 
 from allauth.socialaccount import app_settings, providers
@@ -20,7 +20,6 @@ from allauth.socialaccount.providers.oauth2.views import (
 
 from .forms import FacebookConnectForm
 from .provider import GRAPH_API_URL, GRAPH_API_VERSION, FacebookProvider
-
 
 logger = logging.getLogger(__name__)
 

@@ -10,7 +10,6 @@ from allauth.socialaccount.providers.oauth2.views import (
 
 from .provider import AzureProvider
 
-
 LOGIN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0"
 GRAPH_URL = "https://graph.microsoft.com/v1.0"
 

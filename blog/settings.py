@@ -138,9 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'Africa/Nairobi'
+TIME_ZONE = "Africa/Nairobi"
 
 USE_I18N = True
 
@@ -295,8 +295,7 @@ PAYMENT_VARIANTS = {
     ),
     "Mpesa": (
         "payments.mpesa.MpesaProvider",
-        {"consumer_key": CONSUMER_KEY,
-         "consumer_secret": CONSUMER_SECRET},
+        {"consumer_key": CONSUMER_KEY, "consumer_secret": CONSUMER_SECRET},
     ),
 }
 

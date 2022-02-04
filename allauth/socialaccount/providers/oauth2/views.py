@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 
 from datetime import timedelta
-from requests import RequestException
 
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
+from requests import RequestException
 
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount import providers
@@ -16,10 +16,7 @@ from allauth.socialaccount.helpers import (
 )
 from allauth.socialaccount.models import SocialLogin, SocialToken
 from allauth.socialaccount.providers.base import ProviderException
-from allauth.socialaccount.providers.oauth2.client import (
-    OAuth2Client,
-    OAuth2Error,
-)
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client, OAuth2Error
 from allauth.utils import build_absolute_uri, get_request_param
 
 from ..base import AuthAction, AuthError

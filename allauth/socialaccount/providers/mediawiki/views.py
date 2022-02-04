@@ -1,5 +1,4 @@
 import requests
-
 from django.conf import settings
 
 from allauth.socialaccount.providers.oauth2.views import (
@@ -9,7 +8,6 @@ from allauth.socialaccount.providers.oauth2.views import (
 )
 
 from .provider import MediaWikiProvider
-
 
 settings = getattr(settings, "SOCIALACCOUNT_PROVIDERS", {}).get("mediawiki", {})
 

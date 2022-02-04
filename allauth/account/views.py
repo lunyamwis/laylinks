@@ -1,11 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from django.http import (
-    Http404,
-    HttpResponsePermanentRedirect,
-    HttpResponseRedirect,
-)
+from django.http import Http404, HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
@@ -38,7 +34,6 @@ from .utils import (
     sync_user_email_addresses,
     url_str_to_user_pk,
 )
-
 
 INTERNAL_RESET_URL_KEY = "set-password"
 INTERNAL_RESET_SESSION_KEY = "_password_reset_key"

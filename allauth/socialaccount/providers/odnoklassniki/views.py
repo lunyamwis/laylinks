@@ -1,5 +1,6 @@
-import requests
 from hashlib import md5
+
+import requests
 
 from allauth.socialaccount.providers.oauth2.views import (
     OAuth2Adapter,
@@ -8,7 +9,6 @@ from allauth.socialaccount.providers.oauth2.views import (
 )
 
 from .provider import OdnoklassnikiProvider
-
 
 USER_FIELDS = [
     "uid",

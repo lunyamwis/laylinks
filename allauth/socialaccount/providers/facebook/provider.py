@@ -22,7 +22,6 @@ from allauth.utils import import_callable
 
 from .locale import get_default_locale_callable
 
-
 GRAPH_API_VERSION = (
     getattr(settings, "SOCIALACCOUNT_PROVIDERS", {})
     .get("facebook", {})

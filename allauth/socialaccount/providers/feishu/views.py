@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import requests
-
 from django.urls import reverse
 
 from allauth.account import app_settings

@@ -6,18 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('socialaccount', '0002_initial'),
+        ("socialaccount", "0002_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='socialaccount',
-            name='provider',
-            field=models.CharField(choices=[('facebook', 'Facebook'), ('google', 'Google'), ('twitter', 'Twitter')], max_length=30, verbose_name='provider'),
+            model_name="socialaccount",
+            name="provider",
+            field=models.CharField(
+                choices=[
+                    ("facebook", "Facebook"),
+                    ("google", "Google"),
+                    ("twitter", "Twitter"),
+                ],
+                max_length=30,
+                verbose_name="provider",
+            ),
         ),
         migrations.AlterField(
-            model_name='socialapp',
-            name='provider',
-            field=models.CharField(choices=[('facebook', 'Facebook'), ('google', 'Google'), ('twitter', 'Twitter')], max_length=30, verbose_name='provider'),
+            model_name="socialapp",
+            name="provider",
+            field=models.CharField(
+                choices=[
+                    ("facebook", "Facebook"),
+                    ("google", "Google"),
+                    ("twitter", "Twitter"),
+                ],
+                max_length=30,
+                verbose_name="provider",
+            ),
         ),
     ]

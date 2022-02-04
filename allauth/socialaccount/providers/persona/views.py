@@ -1,5 +1,4 @@
 import requests
-
 from django.core.exceptions import ImproperlyConfigured
 
 from allauth.socialaccount import app_settings, providers

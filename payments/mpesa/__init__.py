@@ -56,7 +56,7 @@ class MpesaProvider(BasicProvider):
         self.endpoint = endpoint
         self.business_short_code = business_short_code
         self.basic_token = basic_token
-        self.timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        self.timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         self.passkey = passkey
 
         super().__init__()

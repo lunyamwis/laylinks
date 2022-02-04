@@ -1,6 +1,6 @@
-import requests
 from datetime import timedelta
 
+import requests
 from django.utils import timezone
 
 from allauth.socialaccount import app_settings

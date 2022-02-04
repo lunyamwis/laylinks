@@ -25,7 +25,6 @@ from django.db.models.fields import (
 from django.utils import dateparse
 from django.utils.encoding import force_bytes, force_str
 
-
 # Magic number 7: if you run into collisions with this number, then you are
 # of big enough scale to start investing in a decent user model...
 MAX_USERNAME_SUFFIX_LENGTH = 7

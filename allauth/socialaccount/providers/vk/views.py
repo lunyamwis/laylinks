@@ -8,7 +8,6 @@ from allauth.socialaccount.providers.oauth2.views import (
 
 from .provider import VKProvider
 
-
 USER_FIELDS = [
     "first_name",
     "last_name",

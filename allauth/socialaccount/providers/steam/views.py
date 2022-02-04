@@ -21,7 +21,6 @@ from allauth.socialaccount.providers.openid.views import (
 
 from .provider import SteamOpenIDProvider
 
-
 STEAM_OPENID_URL = "https://steamcommunity.com/openid"
 
 

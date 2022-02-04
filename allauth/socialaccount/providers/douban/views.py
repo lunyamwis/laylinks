@@ -1,5 +1,4 @@
 import requests
-
 from django.utils.translation import gettext_lazy as _
 
 from allauth.socialaccount.providers.oauth2.views import (

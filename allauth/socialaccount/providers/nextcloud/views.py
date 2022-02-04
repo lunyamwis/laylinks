@@ -1,5 +1,6 @@
-import requests
 import xml.etree.ElementTree as ET
+
+import requests
 
 from allauth.socialaccount import app_settings
 from allauth.socialaccount.providers.oauth2.views import (
