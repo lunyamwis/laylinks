@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from django.views import generic
+from payments.mpesa import MpesaProvider
 from django.views.decorators.csrf import csrf_exempt
 from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -12,6 +13,7 @@ from rest_framework.response import Response
 import stripe
 
 from content.models import Pricing
+from payments.mpesa.forms import MpesaPaymentForm
 
 User = get_user_model()
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -202,16 +204,6 @@ class ChangeSubscriptionView(APIView):
 
 def payment_details(request, payment_id):
     payment = get_object_or_404(get_payment_model(), id=payment_id)
-
-    # request.POST['variant'] = payment.variant
-    # request.POST['status'] = payment.status
-    # request.POST['variant'] = payment.variant
-    # request.POST['fraud_check'] = payment.fraud_check
-    # request.POST['currency'] = payment.currency
-    # request.POST['total'] = payment.total
-    # request.POST['delivery'] = payment.delivery
-    # request.POST['tax'] = payment.tax
-    # request.POST['captured_amount'] = payment.captured_amount
     data = {}
     data['variant'] = payment.variant
     data['status'] = payment.status
@@ -223,10 +215,27 @@ def payment_details(request, payment_id):
     data['tax'] = payment.tax
     data['captured_amount'] = payment.captured_amount
 
+    is_mpesa = False
+    mpesa_form = MpesaPaymentForm()
+
+    if payment.variant == "Mpesa":
+        is_mpesa = True
+        if request.method == "POST":
+            mpesa_form = MpesaPaymentForm(data=request.POST)
+            payment.mobile_number = request.POST.get(
+                "mobile_number")
+            payment.save()
+            mpesa = MpesaProvider(consumer_key=settings.CONSUMER_KEY,
+                                  consumer_secret=settings.CONSUMER_SECRET)
+            mpesa.post(payment)
+            messages.success(
+                request, message="Successfuly made an mpesa payment")
+            return redirect('/')
+
     try:
         form = payment.get_form(data=data or None)
     except RedirectNeeded as redirect_to:
         return redirect(str(redirect_to))
     return TemplateResponse(request, 'payment_forms/payment.html', {
-        'form': form, 'payment': payment
+        'form': form, 'payment': payment, "mpesa_form": mpesa_form, "is_mpesa": is_mpesa
     })

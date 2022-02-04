@@ -14,8 +14,8 @@ from django.views.generic import DetailView, ListView, View
 
 # Payment
 from payment.models import Payment
-
-from .forms import CheckoutForm, CouponForm, PaymentForm, RefundForm
+from payments.mpesa.forms import MpesaPaymentForm
+from .forms import CheckoutForm, PaymentForm, CouponForm, RefundForm
 from .models import Address, Coupon, Item, Order, OrderItem, Refund, UserProfile
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -54,14 +54,17 @@ class CheckoutView(View):
                 user=self.request.user, address_type="S", default=True
             )
             if shipping_address_qs.exists():
-                context.update({"default_shipping_address": shipping_address_qs[0]})
+                context.update(
+                    {"default_shipping_address": shipping_address_qs[0]})
 
             billing_address_qs = Address.objects.filter(
                 user=self.request.user, address_type="B", default=True
             )
             if billing_address_qs.exists():
-                context.update({"default_billing_address": billing_address_qs[0]})
+                context.update(
+                    {"default_billing_address": billing_address_qs[0]})
             return render(self.request, "checkout.html", context)
+
         except ObjectDoesNotExist:
             messages.info(self.request, "You do not have an active order")
             return redirect("core:checkout")
@@ -72,7 +75,8 @@ class CheckoutView(View):
             order = Order.objects.get(user=self.request.user, ordered=False)
             if form.is_valid():
 
-                use_default_shipping = form.cleaned_data.get("use_default_shipping")
+                use_default_shipping = form.cleaned_data.get(
+                    "use_default_shipping")
                 if use_default_shipping:
                     print("Using the defualt shipping address")
                     address_qs = Address.objects.filter(
@@ -89,9 +93,12 @@ class CheckoutView(View):
                         return redirect("core:checkout")
                 else:
                     print("User is entering a new shipping address")
-                    shipping_address1 = form.cleaned_data.get("shipping_address")
-                    shipping_address2 = form.cleaned_data.get("shipping_address2")
-                    shipping_country = form.cleaned_data.get("shipping_country")
+                    shipping_address1 = form.cleaned_data.get(
+                        "shipping_address")
+                    shipping_address2 = form.cleaned_data.get(
+                        "shipping_address2")
+                    shipping_country = form.cleaned_data.get(
+                        "shipping_country")
                     shipping_zip = form.cleaned_data.get("shipping_zip")
 
                     if is_valid_form(
@@ -123,8 +130,10 @@ class CheckoutView(View):
                             "Please fill in the required shipping address fields",
                         )
 
-                use_default_billing = form.cleaned_data.get("use_default_billing")
-                same_billing_address = form.cleaned_data.get("same_billing_address")
+                use_default_billing = form.cleaned_data.get(
+                    "use_default_billing")
+                same_billing_address = form.cleaned_data.get(
+                    "same_billing_address")
 
                 if same_billing_address:
                     billing_address = shipping_address
@@ -152,7 +161,8 @@ class CheckoutView(View):
                 else:
                     print("User is entering a new billing address")
                     billing_address1 = form.cleaned_data.get("billing_address")
-                    billing_address2 = form.cleaned_data.get("billing_address2")
+                    billing_address2 = form.cleaned_data.get(
+                        "billing_address2")
                     billing_country = form.cleaned_data.get("billing_country")
                     billing_zip = form.cleaned_data.get("billing_zip")
 
@@ -189,8 +199,11 @@ class CheckoutView(View):
                     return redirect("core:payment", payment_option="stripe")
                 elif payment_option == "Paypal":
                     return redirect("core:payment", payment_option="paypal")
+                elif payment_option == "Mpesa":
+                    return redirect("core:payment", payment_option="Mpesa")
                 else:
-                    messages.warning(self.request, "Invalid payment option selected")
+                    messages.warning(
+                        self.request, "Invalid payment option selected")
                     return redirect("core:checkout")
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
@@ -200,12 +213,12 @@ class CheckoutView(View):
 class PaymentView(View):
     def get(self, *args, **kwargs):
         order = Order.objects.get(user=self.request.user, ordered=False)
-        host = self.request.get_host()
-        amount = int(order.get_total())
+        payment_option = kwargs.get("payment_option")
         if order.billing_address or order.shipping_address:
 
             payment = Payment()
-            payment.variant = "Paypal"
+            payment.variant = payment_option
+
             payment.user = self.request.user
             payment.total = order.get_total()
             payment.tax = order.get_total() * 0.1
@@ -248,12 +261,15 @@ class PaymentView(View):
             messages.success(self.request, "Your order was successful!")
             return redirect("payment:payment_details", payment_id=payment.id)
         else:
-            messages.warning(self.request, "You have not added a billing address")
+            messages.warning(
+                self.request, "You have not added a billing address")
             return redirect("core:checkout")
 
     def post(self, *args, **kwargs):
         order = Order.objects.get(user=self.request.user, ordered=False)
+        payment_option = kwargs.get['payment_option']
         form = PaymentForm(self.request.POST)
+        mpesa_form = MpesaPaymentForm(self.request.POST)
         host = self.request.get_host()
         userprofile = UserProfile.objects.get(user=self.request.user)
         # import pdb
@@ -301,7 +317,15 @@ class PaymentView(View):
                         payment.billing_country_code = shipping_address.country
 
                     payment.payment_purpose = "B"
-                    payment.save()
+                    if payment.variant == "Paypal":
+                        payment.save()
+                    elif payment.variant == "Mpesa":
+                        if mpesa_form.is_valid():
+                            mpesa_form.save()
+
+                        payment.mobile_number = mpesa_form.cleaned_data.get(
+                            "mobile_number")
+                        payment.save()
 
                     # assign the payment to the order
 
@@ -369,7 +393,8 @@ def add_to_cart(request, slug):
             return redirect("core:order-summary")
     else:
         ordered_date = timezone.now()
-        order = Order.objects.create(user=request.user, ordered_date=ordered_date)
+        order = Order.objects.create(
+            user=request.user, ordered_date=ordered_date)
         order.items.add(order_item)
         messages.info(request, "This item was added to your cart.")
         return redirect("core:order-summary")
@@ -439,7 +464,8 @@ class AddCouponView(View):
         if form.is_valid():
             try:
                 code = form.cleaned_data.get("code")
-                order = Order.objects.get(user=self.request.user, ordered=False)
+                order = Order.objects.get(
+                    user=self.request.user, ordered=False)
                 order.coupon = get_coupon(self.request, code)
                 order.save()
                 messages.success(self.request, "Successfully added coupon")

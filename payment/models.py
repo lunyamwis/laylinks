@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from payments import PurchasedItem
 from payments.models import BasePayment
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
@@ -15,6 +16,9 @@ class Payment(BasePayment):
 
     payment_purpose = models.CharField(
         max_length=255, choices=PurposeOptions.choices, default=PurposeOptions.BUY)
+    mobile_number = PhoneNumberField(blank=True, null=True)
+    mpesa_mobile_number = models.CharField(
+        max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.variant} - {self.billing_country_area}"
@@ -27,3 +31,9 @@ class Payment(BasePayment):
 
     def get_purchased_items(self):
         return super().get_purchased_items()
+
+    def save(self, **kwargs):
+        if self.mobile_number:
+            self.mpesa_mobile_number = int(
+                f"{self.mobile_number.country_code}{self.mobile_number.national_number}")
+        return super(Payment, self).save(**kwargs)

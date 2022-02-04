@@ -3,10 +3,18 @@
 <!-- templates/payment.html -->
 {% block content %}
 <div class="container">
+    {% if not is_mpesa %}
     <form action="{{ form.action }}" method="{{ form.method }}">
         {% csrf_token %}
         {{ form | crispy}}
         <p><input type="submit" value="Proceed" /></p>
     </form>
+    {% else %}
+    <form action="." method="POST">
+        {% csrf_token %}
+        {{ mpesa_form | crispy}}
+        <p><input type="submit" value="Proceed" /></p>
+    </form>
+    {% endif %}
 </div>
 {% endblock %}

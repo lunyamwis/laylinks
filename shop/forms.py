@@ -5,6 +5,7 @@ from django_countries.widgets import CountrySelectWidget
 
 PAYMENT_CHOICES = (
     ('Paypal', 'Credit Card'),
+    ('Mpesa', 'Mpesa')
 )
 
 

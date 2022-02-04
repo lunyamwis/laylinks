@@ -56,6 +56,7 @@ class MpesaProvider(BasicProvider):
         self.endpoint = endpoint
         self.business_short_code = business_short_code
         self.basic_token = basic_token
+        self.timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
         self.passkey = passkey
 
         super().__init__()
@@ -89,25 +90,25 @@ class MpesaProvider(BasicProvider):
         return f"Bearer {resp['access_token']}"
 
     def generate_password(self):
-        data_to_encode = f"{self.business_short_code}{self.passkey}20220203161145"
+        data_to_encode = f"{self.business_short_code}{self.passkey}{self.timestamp}"
         online_password = base64.b64encode(data_to_encode.encode())
         decode_password = online_password.decode("utf-8")
         return decode_password
 
-    def post(self, payment, *args, **kwargs):
+    def post(self, payment):
         headers = {
             "Content-Type": "application/json",
             "Authorization": self.get_access_token(),
         }
         payload = {
-            "BusinessShortCode": 174379,
+            "BusinessShortCode": self.business_short_code,
             "Password": self.generate_password(),
-            "Timestamp": "20220203161145",
+            "Timestamp": self.timestamp,
             "TransactionType": "CustomerPayBillOnline",
             "Amount": int(payment.total),
-            "PartyA": 254700701209,
+            "PartyA": int(payment.mpesa_mobile_number),
             "PartyB": 174379,
-            "PhoneNumber": 254700701209,
+            "PhoneNumber": int(payment.mpesa_mobile_number),
             "CallBackURL": "https://mydomain.com/path",
             "AccountReference": "CompanyXLTD",
             "TransactionDesc": "Payment of X",
