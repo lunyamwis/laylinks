@@ -250,8 +250,21 @@ class MinistryListView(ListView):
 class EvangelismWizzard(SessionWizardView):
     """this class is for taking a member through inviting a minister or ministry"""
 
+    form_list = EVANGELISM_FORMS
+    template_name = "evangelism/wizzard.html"
+
     def done(self):
-        """this functions manipulates the invitation form"""
+        """
+        step 1 - filter the list to show which category the minister lands in
+        step 2 - if member fills in the event to be sermon details it should
+        take them direct to filling in sermon details and if they fill it in as
+        an event then it should directly take them to event details
+        step 3 - if an event/invitation is completed then it should mark of the
+        is_completed flag to true, and report that the form has been completed to 100%
+        step 4 - an email should be sent to the ministers / ministries upon completion
+        of the form.
+
+        """
         return redirect("/")
 
 
