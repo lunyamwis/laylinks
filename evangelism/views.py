@@ -255,6 +255,21 @@ class EvangelismWizzard(SessionWizardView):
         return redirect("/")
 
 
+class EvangelismListView(ListView):
+    """this class is meant to enlist the ministries"""
+
+    model = Evangelism
+    paginate_by = 15
+    template_name = "evangelism/list.html"
+
+    def get_context_data(self, **kwargs):
+        """this function helps assign variables to the jinja templates"""
+        context = super().get_context_data(**kwargs)
+        context["now"] = timezone.now()
+        context["data"] = "field"
+        return context
+
+
 def field_detail(request, **kwargs):
     """this function gives us another approach of manipulating the invitation form"""
     name = kwargs["name"]

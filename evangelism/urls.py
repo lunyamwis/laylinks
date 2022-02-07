@@ -20,6 +20,7 @@ from evangelism.forms import (
 )
 
 from .views import (
+    EvangelismListView,
     EvangelismWizzard,
     MemberListView,
     MemberRegistrationWizzard,
@@ -77,6 +78,11 @@ urlpatterns = [
         "field/invite/",
         EvangelismWizzard.as_view(EVANGELISM_FORMS),
         name="evangelism_wizzard",
+    ),
+    path(
+        "field/list/",
+        EvangelismListView.as_view(),
+        name="events_list",
     ),
     path("field/<str:name>/", field_detail, name="field"),
 ]
