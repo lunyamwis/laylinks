@@ -54,6 +54,7 @@ urlpatterns = [
     path("donation/", include("donation.urls", namespace="donation")),
     path("payment/", include("payment.urls")),
     path("payments/", include("payments.urls")),
+    path("podcast/", include("podcast.urls")),
 ]
 
 if settings.DEBUG:

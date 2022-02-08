@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "tinymce.apps.TinyMCEConfig",
     "marketing",
     "posts",
+    "podcast",
 ]
 
 SOCIALACCOUNT_PROVIDERS = {

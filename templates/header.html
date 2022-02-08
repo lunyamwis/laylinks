@@ -46,6 +46,8 @@
           </li>
           <li class="nav-item"><a href="{% url 'evangelism:events_list' %}" class="nav-link ">Events</a>
           </li>
+          <li class="nav-item"><a href="{% url 'podcast:list' %}" class="nav-link ">Podcast</a>
+          </li>
           {% if request.user.is_staff %}
           <li class="nav-item"><a href="{% url 'post-create' %}" class="nav-link ">Create</a>
           </li>
