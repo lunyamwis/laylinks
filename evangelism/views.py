@@ -263,7 +263,6 @@ class EvangelismWizzard(SessionWizardView):
         is_completed flag to true, and report that the form has been completed to 100%
         step 4 - an email should be sent to the ministers / ministries upon completion
         of the form.
-
         """
         return redirect("/")
 

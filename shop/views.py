@@ -8,7 +8,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls.base import reverse
 from django.utils import timezone
 from django.views.generic import DetailView, ListView, View
 
@@ -40,55 +39,90 @@ def is_valid_form(values):
 
 
 class CheckoutView(View):
-    def get(self, *args, **kwargs):
+    def get(self):
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+
+            payment = Payment.objects.filter(
+                total=self.request.session.get("amount", None)
+            )
+
+            if payment.exists():
+                # start up / place an order if a payment already exists
+                order = Order()
+            else:
+                order = Order.objects.get(user=self.request.user, ordered=False)
+
             form = CheckoutForm()
             context = {
                 "form": form,
                 "couponform": CouponForm(),
                 "order": order,
-                "DISPLAY_COUPON_FORM": True,
+                "payment": payment.first() if payment.exists() else None,
+                # should display the coupon and cart form if payment does not exist
+                "DISPLAY_COUPON_FORM": not payment.exists(),
+                "DISPLAY_CART_FORM": not payment.exists(),
             }
 
-            shipping_address_qs = Address.objects.filter(
-                user=self.request.user, address_type="S", default=True
-            )
-            if shipping_address_qs.exists():
-                context.update({"default_shipping_address": shipping_address_qs[0]})
+            if payment.exists():
+                # if the payment exists start up an Address instance
+                shipping_address_qs = Address()
+            else:
+                shipping_address_qs = Address.objects.filter(
+                    user=self.request.user, address_type="S", default=True
+                )
+                if shipping_address_qs.exists():
+                    context.update(
+                        {"default_shipping_address": shipping_address_qs.first()}
+                    )
 
-            billing_address_qs = Address.objects.filter(
-                user=self.request.user, address_type="B", default=True
-            )
-            if billing_address_qs.exists():
-                context.update({"default_billing_address": billing_address_qs[0]})
+            if payment.exists():
+                billing_address_qs = Address()
+            else:
+                billing_address_qs = Address.objects.filter(
+                    user=self.request.user, address_type="B", default=True
+                )
+                if billing_address_qs.exists():
+                    context.update(
+                        {"default_billing_address": billing_address_qs.first()}
+                    )
             return render(self.request, "checkout.html", context)
 
         except ObjectDoesNotExist:
             messages.info(self.request, "You do not have an active order")
             return redirect("core:checkout")
 
-    def post(self, *args, **kwargs):
+    def post(self):
         form = CheckoutForm(self.request.POST or None)
         try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+            payment = Payment.objects.filter(
+                total=self.request.session.get("amount", None)
+            )
+            if payment.exists():
+                # start up an order
+                order = Order()
+            else:
+                order = Order.objects.get(user=self.request.user, ordered=False)
             if form.is_valid():
 
                 use_default_shipping = form.cleaned_data.get("use_default_shipping")
                 if use_default_shipping:
                     print("Using the defualt shipping address")
-                    address_qs = Address.objects.filter(
-                        user=self.request.user, address_type="S", default=True
-                    )
-                    if address_qs.exists():
-                        shipping_address = address_qs[0]
-                        order.shipping_address = shipping_address
-                        order.save()
+                    if payment.exists():
+                        # start up an Address instance
+                        address_qs = Address()
                     else:
-                        messages.info(
-                            self.request, "No default shipping address available"
+                        address_qs = Address.objects.filter(
+                            user=self.request.user, address_type="S", default=True
                         )
-                        return redirect("core:checkout")
+                        if address_qs.exists():
+                            shipping_address = address_qs[0]
+                            order.shipping_address = shipping_address
+                            order.save()
+                        else:
+                            messages.info(
+                                self.request, "No default shipping address available"
+                            )
+                            return redirect("core:checkout")
                 else:
                     print("User is entering a new shipping address")
                     shipping_address1 = form.cleaned_data.get("shipping_address")
@@ -99,25 +133,29 @@ class CheckoutView(View):
                     if is_valid_form(
                         [shipping_address1, shipping_country, shipping_zip]
                     ):
-                        shipping_address = Address(
-                            user=self.request.user,
-                            street_address=shipping_address1,
-                            apartment_address=shipping_address2,
-                            country=shipping_country,
-                            zip=shipping_zip,
-                            address_type="S",
-                        )
-                        shipping_address.save()
-
-                        order.shipping_address = shipping_address
-                        order.save()
-
-                        set_default_shipping = form.cleaned_data.get(
-                            "set_default_shipping"
-                        )
-                        if set_default_shipping:
-                            shipping_address.default = True
+                        if payment.exists():
+                            # start up a shipping address instance
+                            shipping_address = Address()
+                        else:
+                            shipping_address = Address(
+                                user=self.request.user,
+                                street_address=shipping_address1,
+                                apartment_address=shipping_address2,
+                                country=shipping_country,
+                                zip=shipping_zip,
+                                address_type="S",
+                            )
                             shipping_address.save()
+
+                            order.shipping_address = shipping_address
+                            order.save()
+
+                            set_default_shipping = form.cleaned_data.get(
+                                "set_default_shipping"
+                            )
+                            if set_default_shipping:
+                                shipping_address.default = True
+                                shipping_address.save()
 
                     else:
                         messages.info(
@@ -139,18 +177,22 @@ class CheckoutView(View):
 
                 elif use_default_billing:
                     print("Using the defualt billing address")
-                    address_qs = Address.objects.filter(
-                        user=self.request.user, address_type="B", default=True
-                    )
-                    if address_qs.exists():
-                        billing_address = address_qs[0]
-                        order.billing_address = billing_address
-                        order.save()
+                    if payment.exists():
+                        # start up an Address instance again afresh"""
+                        address_qs = Address()
                     else:
-                        messages.info(
-                            self.request, "No default billing address available"
+                        address_qs = Address.objects.filter(
+                            user=self.request.user, address_type="B", default=True
                         )
-                        return redirect("core:checkout")
+                        if address_qs.exists():
+                            billing_address = address_qs[0]
+                            order.billing_address = billing_address
+                            order.save()
+                        else:
+                            messages.info(
+                                self.request, "No default billing address available"
+                            )
+                            return redirect("core:checkout")
                 else:
                     print("User is entering a new billing address")
                     billing_address1 = form.cleaned_data.get("billing_address")
@@ -159,25 +201,29 @@ class CheckoutView(View):
                     billing_zip = form.cleaned_data.get("billing_zip")
 
                     if is_valid_form([billing_address1, billing_country, billing_zip]):
-                        billing_address = Address(
-                            user=self.request.user,
-                            street_address=billing_address1,
-                            apartment_address=billing_address2,
-                            country=billing_country,
-                            zip=billing_zip,
-                            address_type="B",
-                        )
-                        billing_address.save()
-
-                        order.billing_address = billing_address
-                        order.save()
-
-                        set_default_billing = form.cleaned_data.get(
-                            "set_default_billing"
-                        )
-                        if set_default_billing:
-                            billing_address.default = True
+                        if payment.exists():
+                            # start up an Address instance"""
+                            billing_address = Address()
+                        else:
+                            billing_address = Address(
+                                user=self.request.user,
+                                street_address=billing_address1,
+                                apartment_address=billing_address2,
+                                country=billing_country,
+                                zip=billing_zip,
+                                address_type="B",
+                            )
                             billing_address.save()
+
+                            order.billing_address = billing_address
+                            order.save()
+
+                            set_default_billing = form.cleaned_data.get(
+                                "set_default_billing"
+                            )
+                            if set_default_billing:
+                                billing_address.default = True
+                                billing_address.save()
 
                     else:
                         messages.info(
@@ -190,7 +236,7 @@ class CheckoutView(View):
                 if payment_option == "S":
                     return redirect("core:payment", payment_option="stripe")
                 elif payment_option == "Paypal":
-                    return redirect("core:payment", payment_option="paypal")
+                    return redirect("core:payment", payment_option="Paypal")
                 elif payment_option == "Mpesa":
                     return redirect("core:payment", payment_option="Mpesa")
                 else:
@@ -202,93 +248,31 @@ class CheckoutView(View):
 
 
 class PaymentView(View):
-    def get(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
+    def get(self, **kwargs):
+        payment = Payment.objects.filter(total=self.request.session.get("amount", None))
         payment_option = kwargs.get("payment_option")
-        if order.billing_address or order.shipping_address:
-
-            payment = Payment()
+        if payment.exists():
+            payment = payment.first()
             payment.variant = payment_option
-
-            payment.user = self.request.user
-            payment.total = order.get_total()
-            payment.tax = order.get_total() * 0.1
-            payment.delivery = order.get_total() * 0.05
-
-            # import pdb
-            # pdb.set_trace()
-            if order.billing_address:
-                billing_address = order.billing_address
-                payment.billing_first_name = billing_address.user.first_name
-                payment.billing_last_name = billing_address.user.last_name
-                payment.billing_address_1 = billing_address.street_address
-                payment.billing_address_2 = billing_address.apartment_address
-                payment.billing_country_area = billing_address.country
-                payment.billing_country_code = billing_address.country
-
-            elif order.shipping_address:
-                shipping_address = order.shipping_address
-                payment.billing_first_name = shipping_address.user.first_name
-                payment.billing_last_name = shipping_address.user.last_name
-                payment.billing_address_1 = shipping_address.street_address
-                payment.billing_address_2 = shipping_address.apartment_address
-                payment.billing_country_area = shipping_address.country
-                payment.billing_country_code = shipping_address.country
-
             payment.save()
-
-            # assign the payment to the order
-
-            order_items = order.items.all()
-            order_items.update(ordered=True)
-            for item in order_items:
-                item.save()
-
-            order.ordered = True
-            order.payment = payment
-            order.ref_code = create_ref_code()
-            order.save()
-
-            messages.success(self.request, "Your order was successful!")
-            return redirect("payment:payment_details", payment_id=payment.id)
+            order = Order()
         else:
-            messages.warning(self.request, "You have not added a billing address")
-            return redirect("core:checkout")
 
-    def post(self, *args, **kwargs):
-        order = Order.objects.get(user=self.request.user, ordered=False)
-        payment_option = kwargs.get["payment_option"]
-        form = PaymentForm(self.request.POST)
-        mpesa_form = MpesaPaymentForm(self.request.POST)
-        host = self.request.get_host()
-        userprofile = UserProfile.objects.get(user=self.request.user)
-        # import pdb
-        # pdb.set_trace()
-        if form.is_valid():
-            save = form.cleaned_data.get("save")
-            use_default = form.cleaned_data.get("use_default")
+            order = Order.objects.get(user=self.request.user, ordered=False)
 
-            if save:
+            if order.billing_address or order.shipping_address:
 
-                userprofile.one_click_purchasing = True
-                userprofile.save()
+                payment = Payment()
+                payment.variant = payment_option
 
-            amount = int(order.get_total())
+                payment.user = self.request.user
+                payment.total = order.get_total()
+                payment.tax = order.get_total() * 0.1
+                payment.delivery = order.get_total() * 0.05
 
-            try:
-
-                if order.billing_address or order.shipping_address:
-
-                    payment = Payment()
-                    payment.variant = form.cleaned_data.get("payment_option")
-
-                    payment.user = self.request.user
-                    payment.total = order.get_total()
-                    payment.tax = order.get_total() * 0.1
-                    payment.delivery = order.get_total() * 0.05
-
-                    # import pdb
-                    # pdb.set_trace()
+                # import pdb
+                # pdb.set_trace()
+                if order.billing_address:
                     billing_address = order.billing_address
                     payment.billing_first_name = billing_address.user.first_name
                     payment.billing_last_name = billing_address.user.last_name
@@ -297,45 +281,123 @@ class PaymentView(View):
                     payment.billing_country_area = billing_address.country
                     payment.billing_country_code = billing_address.country
 
-                    if order.shipping_address:
-                        shipping_address = order.shipping_address
-                        payment.billing_first_name = shipping_address.user.first_name
-                        payment.billing_last_name = shipping_address.user.last_name
-                        payment.billing_address_1 = shipping_address.street_address
-                        payment.billing_address_2 = shipping_address.apartment_address
-                        payment.billing_country_area = shipping_address.country
-                        payment.billing_country_code = shipping_address.country
+                elif order.shipping_address:
+                    shipping_address = order.shipping_address
+                    payment.billing_first_name = shipping_address.user.first_name
+                    payment.billing_last_name = shipping_address.user.last_name
+                    payment.billing_address_1 = shipping_address.street_address
+                    payment.billing_address_2 = shipping_address.apartment_address
+                    payment.billing_country_area = shipping_address.country
+                    payment.billing_country_code = shipping_address.country
 
-                    payment.payment_purpose = "B"
-                    if payment.variant == "Paypal":
-                        payment.save()
-                    elif payment.variant == "Mpesa":
-                        if mpesa_form.is_valid():
-                            mpesa_form.save()
+                payment.save()
 
-                        payment.mobile_number = mpesa_form.cleaned_data.get(
-                            "mobile_number"
-                        )
-                        payment.save()
+                # assign the payment to the order
 
-                    # assign the payment to the order
+                order_items = order.items.all()
+                order_items.update(ordered=True)
+                for item in order_items:
+                    item.save()
 
-                    order_items = order.items.all()
-                    order_items.update(ordered=True)
-                    for item in order_items:
-                        item.save()
+                order.ordered = True
+                order.payment = payment
+                order.ref_code = create_ref_code()
+                order.save()
 
-                    order.ordered = True
-                    order.payment = payment
-                    order.ref_code = create_ref_code()
-                    order.save()
+                messages.success(self.request, "Your order was successful!")
+                return redirect("payment:payment_details", payment_id=payment.id)
+            else:
+                messages.warning(self.request, "You have not added a billing address")
+                return redirect("core:checkout")
 
-            except Exception as e:
-                # send an email to ourselves
-                messages.warning(
-                    self.request, "A serious error occurred. We have been notifed."
-                )
-                return redirect("/")
+        messages.success(self.request, "Your order was successful!")
+        return redirect("payment:payment_details", payment_id=payment.id)
+
+    def post(self):
+        payment = Payment.objects.filter(total=self.request.session.get("amount", None))
+        if payment.exists():
+            payment = payment.first()
+            order = Order()
+        else:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            form = PaymentForm(self.request.POST)
+            mpesa_form = MpesaPaymentForm(self.request.POST)
+            userprofile = UserProfile.objects.get(user=self.request.user)
+
+            if form.is_valid():
+                save = form.cleaned_data.get("save")
+
+                if save:
+
+                    userprofile.one_click_purchasing = True
+                    userprofile.save()
+
+                try:
+
+                    if order.billing_address or order.shipping_address:
+
+                        payment = Payment()
+                        payment.variant = form.cleaned_data.get("payment_option")
+
+                        payment.user = self.request.user
+                        payment.total = order.get_total()
+                        payment.tax = order.get_total() * 0.1
+                        payment.delivery = order.get_total() * 0.05
+
+                        # import pdb
+                        # pdb.set_trace()
+                        billing_address = order.billing_address
+                        payment.billing_first_name = billing_address.user.first_name
+                        payment.billing_last_name = billing_address.user.last_name
+                        payment.billing_address_1 = billing_address.street_address
+                        payment.billing_address_2 = billing_address.apartment_address
+                        payment.billing_country_area = billing_address.country
+                        payment.billing_country_code = billing_address.country
+
+                        if order.shipping_address:
+                            shipping_address = order.shipping_address
+                            payment.billing_first_name = (
+                                shipping_address.user.first_name
+                            )
+                            payment.billing_last_name = shipping_address.user.last_name
+                            payment.billing_address_1 = shipping_address.street_address
+                            payment.billing_address_2 = (
+                                shipping_address.apartment_address
+                            )
+                            payment.billing_country_area = shipping_address.country
+                            payment.billing_country_code = shipping_address.country
+
+                        payment.payment_purpose = "B"
+                        if payment.variant == "Paypal":
+                            payment.save()
+                        elif payment.variant == "Mpesa":
+                            if mpesa_form.is_valid():
+                                mpesa_form.save()
+
+                            payment.mobile_number = mpesa_form.cleaned_data.get(
+                                "mobile_number"
+                            )
+                            payment.save()
+
+                        # assign the payment to the order
+
+                        order_items = order.items.all()
+                        order_items.update(ordered=True)
+                        for item in order_items:
+                            item.save()
+
+                        order.ordered = True
+                        order.payment = payment
+                        order.ref_code = create_ref_code()
+                        order.save()
+
+                except ObjectDoesNotExist as error:
+                    # send an email to ourselves
+                    messages.warning(
+                        self.request,
+                        f"A serious error {error} occurred. We have been notifed.",
+                    )
+                    return redirect("/")
 
         messages.success(self.request, "Your order was successful!")
         return redirect("payment:payment_details", payment_id=payment.id)
@@ -348,7 +410,7 @@ class HomeView(ListView):
 
 
 class OrderSummaryView(LoginRequiredMixin, View):
-    def get(self, *args, **kwargs):
+    def get(self):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
             context = {"object": order}
@@ -366,7 +428,7 @@ class ItemDetailView(DetailView):
 @login_required
 def add_to_cart(request, slug):
     item = get_object_or_404(Item, slug=slug)
-    order_item, created = OrderItem.objects.get_or_create(
+    order_item, _ = OrderItem.objects.get_or_create(
         item=item, user=request.user, ordered=False
     )
     order_qs = Order.objects.filter(user=request.user, ordered=False)
@@ -449,7 +511,7 @@ def get_coupon(request, code):
 
 
 class AddCouponView(View):
-    def post(self, *args, **kwargs):
+    def post(self):
         form = CouponForm(self.request.POST or None)
         if form.is_valid():
             try:
@@ -465,12 +527,12 @@ class AddCouponView(View):
 
 
 class RequestRefundView(View):
-    def get(self, *args, **kwargs):
+    def get(self):
         form = RefundForm()
         context = {"form": form}
         return render(self.request, "request_refund.html", context)
 
-    def post(self, *args, **kwargs):
+    def post(self):
         form = RefundForm(self.request.POST)
         if form.is_valid():
             ref_code = form.cleaned_data.get("ref_code")

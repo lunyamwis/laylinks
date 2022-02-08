@@ -1,9 +1,7 @@
-from django.conf import settings
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import redirect, render
+from django.views.generic import View
 
-from donation.forms import DonationForm, SubscriptionForm
+from donation.forms import DonationForm
 from payment.models import Payment
 
 
@@ -11,68 +9,26 @@ def index(request):
     return render(request, "base/index.html")
 
 
-def subscription(request):
-    if request.method == "POST":
-        f = SubscriptionForm(request.POST)
-        if f.is_valid():
-            request.session["subscription_plan"] = request.POST.get("plans")
-            return redirect("donation:charge")
-    else:
-        f = SubscriptionForm()
-    return render(request, "base/subscription_form.html", locals())
-
-
-def charge(request):
-
-    subscription_plan = request.session.get("subscription_plan")
-    host = request.get_host()
-    payment = Payment()
-    payment.variant = "Paypal"
-    if subscription_plan == "1-month":
-        payment.total = 10
-        payment.payment_purpose = "D"
-        price = "10"
-        billing_cycle = 1
-        billing_cycle_unit = "M"
-    elif subscription_plan == "6-month":
-        payment.total = 50
-        payment.payment_purpose = "D"
-        price = "50"
-        billing_cycle = 6
-        billing_cycle_unit = "M"
-    else:
-        payment.total = 90
-        payment.payment_purpose = "D"
-        price = "90"
-        billing_cycle = 1
-        billing_cycle_unit = "Y"
-
-    payment.save()
-
-    return redirect("payment:payment_details", payment_id=payment.id)
-
-
-def donation(request):
-    if request.method == "POST":
-        f = DonationForm(request.POST)
-        if f.is_valid():
-            request.session["one_time_amount"] = request.POST.get("one_time_amount")
-            return redirect("donation:charge_donation")
-    else:
+class DonationView(View):
+    def get(self, request):
         f = DonationForm()
-    return render(request, "base/subscription_form.html", locals())
+        return render(request, "base/subscription_form.html", context={"f": f})
 
-
-def charge_donation(request):
-
-    donation_amount = request.session.get("one_time_amount")
-    payment = Payment()
-    payment.variant = "Paypal"
-    payment.total = donation_amount
-    payment.payment_purpose = "D"
-    payment.save()
-
-    return redirect("payment:payment_details", payment_id=payment.id)
+    def post(self, request):
+        """This view is for donations"""
+        payment = Payment()
+        payment.payment_purpose = "D"
+        if request.method == "POST":
+            f = DonationForm(request.POST)
+            if f.is_valid():
+                amount = request.POST.get("amount")
+                request.session["amount"] = amount
+                payment.total = int(amount)
+                payment.save()
+                return redirect("core:checkout")
+        else:
+            f = DonationForm()
+        return render(request, "base/subscription_form.html", locals())
 
 
 def successMsg(request, args):
