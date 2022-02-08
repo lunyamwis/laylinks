@@ -33,3 +33,4 @@ disable=
     R0915, # Too many statements (93/50) (too-many-statements)
     R1705, # Unnecessary "elif" after "return" (no-else-return)
     R1710, # Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+    W0613, # Unused argument 'args' (unused-argument)

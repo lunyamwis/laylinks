@@ -39,7 +39,7 @@ def is_valid_form(values):
 
 
 class CheckoutView(View):
-    def get(self):
+    def get(self, *args, **kwargs):
         try:
 
             payment = Payment.objects.filter(
@@ -91,7 +91,7 @@ class CheckoutView(View):
             messages.info(self.request, "You do not have an active order")
             return redirect("core:checkout")
 
-    def post(self):
+    def post(self, *args, **kwargs):
         form = CheckoutForm(self.request.POST or None)
         try:
             payment = Payment.objects.filter(
@@ -248,7 +248,7 @@ class CheckoutView(View):
 
 
 class PaymentView(View):
-    def get(self, **kwargs):
+    def get(self, *args, **kwargs):
         payment = Payment.objects.filter(total=self.request.session.get("amount", None))
         payment_option = kwargs.get("payment_option")
         if payment.exists():
@@ -313,7 +313,7 @@ class PaymentView(View):
         messages.success(self.request, "Your order was successful!")
         return redirect("payment:payment_details", payment_id=payment.id)
 
-    def post(self):
+    def post(self, *args, **kwargs):
         payment = Payment.objects.filter(total=self.request.session.get("amount", None))
         if payment.exists():
             payment = payment.first()
@@ -410,7 +410,7 @@ class HomeView(ListView):
 
 
 class OrderSummaryView(LoginRequiredMixin, View):
-    def get(self):
+    def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
             context = {"object": order}
@@ -511,7 +511,7 @@ def get_coupon(request, code):
 
 
 class AddCouponView(View):
-    def post(self):
+    def post(self, *args, **kwargs):
         form = CouponForm(self.request.POST or None)
         if form.is_valid():
             try:
@@ -527,12 +527,12 @@ class AddCouponView(View):
 
 
 class RequestRefundView(View):
-    def get(self):
+    def get(self, *args, **kwargs):
         form = RefundForm()
         context = {"form": form}
         return render(self.request, "request_refund.html", context)
 
-    def post(self):
+    def post(self, *args, **kwargs):
         form = RefundForm(self.request.POST)
         if form.is_valid():
             ref_code = form.cleaned_data.get("ref_code")
