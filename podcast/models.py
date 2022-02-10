@@ -80,6 +80,7 @@ class Item(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     link = models.URLField()
+    audio = models.FileField(null=True, blank=True)
     description = models.TextField(help_text="The item synopsis.")
     pud_date = models.DateTimeField(default=timezone.now)
     author = models.EmailField(

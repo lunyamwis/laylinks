@@ -1,6 +1,8 @@
 from django.core import serializers
 from django.http import HttpResponse
+from django.utils import timezone
 from django.views import generic
+from django.views.generic import DetailView, ListView
 
 from . import models
 
@@ -33,6 +35,22 @@ class ItemDetail(generic.TemplateView):
     def get_data(self):
         qs = models.Item.objects.filter(slug=self.kwargs["item"])
         return serializers.serialize("json", qs)
+
+
+class Channels(ListView):
+    model = models.Channel
+    template_name = "podcast/list.html"
+    paginate_by = 100  # if pagination is desired
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["now"] = timezone.now()
+        return context
+
+
+class Item(DetailView):
+    model = models.Item
+    template_name = "podcast/detail.html"
 
 
 class RSSFeed(generic.TemplateView):
