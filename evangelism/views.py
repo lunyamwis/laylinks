@@ -255,12 +255,12 @@ class EvangelismWizzard(SessionWizardView):
 
     def done(self, form_list, form_dict):
         """
-        step 2 - if member fills in the event to be sermon details it should
+        step 1 - if member fills in the event to be sermon details it should
         take them direct to filling in sermon details and if they fill it in as
         an event then it should directly take them to event details
-        step 3 - if an event/invitation is completed then it should mark of the
+        step 2 - if an event/invitation is completed then it should mark of the
         is_completed flag to true, and report that the form has been completed to 100%
-        step 4 - an email should be sent to the ministers / ministries upon completion
+        step 3 - an email should be sent to the ministers / ministries upon completion
         of the form.
         """
         instance = Evangelism()
