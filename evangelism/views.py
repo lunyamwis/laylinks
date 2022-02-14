@@ -253,9 +253,8 @@ class EvangelismWizzard(SessionWizardView):
     form_list = EVANGELISM_FORMS
     template_name = "evangelism/wizzard.html"
 
-    def done(self):
+    def done(self, form_list, form_dict):
         """
-        step 1 - filter the list to show which category the minister lands in
         step 2 - if member fills in the event to be sermon details it should
         take them direct to filling in sermon details and if they fill it in as
         an event then it should directly take them to event details
@@ -264,6 +263,59 @@ class EvangelismWizzard(SessionWizardView):
         step 4 - an email should be sent to the ministers / ministries upon completion
         of the form.
         """
+        instance = Evangelism()
+        for form in form_list:
+            instance = construct_instance(
+                form, instance, form._meta.fields, form._meta.exclude
+            )
+
+        instance.save()
+
+        # assign an event to a minister
+        minister_pk = self.request.GET.get("minister")
+        ministry_pk = self.request.GET.get("ministry")
+        if minister_pk:
+            minister = Minister.objects.get(pk=minister_pk)
+            minister.fields.add(instance)
+            # notify the minister that you have invited them for an event
+            send_mail(
+                subject="Invitation Email",
+                message=f"Hey {minister.name},\n"
+                + "you have been invited to the following event\n"
+                + f"{self.request.get_host()}/evangelism/field/list/",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[minister.email],
+                fail_silently=False,
+            )
+            send_mail(
+                subject="Invitation Email",
+                message=f"Hey {minister.contact_assistant_name},\n"
+                + f"Minister {minister.name} has been invited to the following event\n"
+                + f"{self.request.get_host()}/evangelism/field/list/",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[minister.contact_assistant_email],
+                fail_silently=False,
+            )
+        elif ministry_pk:
+            ministry = Ministry.objects.get(pk=ministry_pk)
+            ministry.fields.add(instance)
+            # notify the minister that you have invited them for an event
+            send_mail(
+                subject="Invitation Email",
+                message=f"Hey {ministry.name},\n"
+                + "you have been invited to the following event\n"
+                + f"{self.request.get_host()}/evangelism/field/list/",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[ministry.email],
+                fail_silently=False,
+            )
+
+        messages.success(
+            request=self.request,
+            message="Successfully sent an invitation, "
+            + "please wait for a confirmation notice",
+        )
+
         return redirect("/")
 
 

@@ -48,7 +48,7 @@
                 {% else %}
                 <td>no events</td>
                 {% endif %}
-                <td><a href="{% url 'evangelism:evangelism_wizzard' %}"> <button
+                <td><a href="{% url 'evangelism:evangelism_wizzard' %}?minister={{obj.pk}}"> <button
                             class="btn btn-sm btn-success">Invite</button></a></td>
             </tr>
             {% endfor %}
@@ -71,7 +71,7 @@
                 {% else %}
                 <td>no events</td>
                 {% endif %}
-                <td><a href="{% url 'evangelism:evangelism_wizzard' %}"> <button
+                <td><a href="{% url 'evangelism:evangelism_wizzard' %}?ministry={{obj.pk}}"> <button
                             class="btn btn-sm btn-success">Invite</button></a></td>
             </tr>
             {% endfor %}
