@@ -35,6 +35,14 @@ class BraintreeProvider(BasicProvider):
             public_key=self.public_key,
             private_key=self.private_key,
         )
+        self.gateway = braintree.BraintreeGateway(
+            braintree.Configuration.configure(
+                environment,
+                merchant_id=self.merchant_id,
+                public_key=self.public_key,
+                private_key=self.private_key,
+            )
+        )
         super().__init__(**kwargs)
         if not self._capture:
             raise ImproperlyConfigured("Braintree does not support pre-authorization.")
@@ -47,3 +55,9 @@ class BraintreeProvider(BasicProvider):
             form.save()
             raise RedirectNeeded(payment.get_success_url())
         return form
+
+    def generate_client_token(self):
+        return self.gateway.client_token.generate()
+
+    def transact(self, options):
+        return self.gateway.transaction.sale(options)

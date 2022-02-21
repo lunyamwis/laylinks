@@ -4,8 +4,9 @@ astroid==2.1.0
 attrs==21.4.0
 autopep8==1.4.3
 billiard==3.6.4.0
+braintree==3.14.0
 celery==5.2.0
-certifi==2019.3.9
+certifi==2021.10.8
 cffi==1.15.0
 cfgv==3.3.1
 chardet==3.0.4

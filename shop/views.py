@@ -239,6 +239,8 @@ class CheckoutView(View):
                     return redirect("core:payment", payment_option="Paypal")
                 elif payment_option == "Mpesa":
                     return redirect("core:payment", payment_option="Mpesa")
+                elif payment_option == "braintree":
+                    return redirect("core:payment", payment_option="braintree")
                 else:
                     messages.warning(self.request, "Invalid payment option selected")
                     return redirect("core:checkout")

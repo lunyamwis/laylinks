@@ -2,7 +2,7 @@ import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.response import TemplateResponse
 from django.views import generic
@@ -26,7 +26,8 @@ def webhook(request):
     webhook_secret = settings.STRIPE_WEBHOOK_SECRET
     payload = request.body
 
-    # Retrieve the event by verifying the signature using the raw body and secret if webhook signing is configured.
+    # Retrieve the event by verifying the signature using the raw body and secret if
+    # webhook signing is configured.
     signature = request.META["HTTP_STRIPE_SIGNATURE"]
     try:
         event = stripe.Webhook.construct_event(
@@ -38,14 +39,12 @@ def webhook(request):
 
     # Get the type of webhook event sent - used to check the status of PaymentIntents.
     event_type = event["type"]
-    data_object = data["object"]
 
     if event_type == "invoice.paid":
         # Used to provision services after the trial has ended.
         # The status of the invoice will show up as paid. Store the status in your
         # database to reference when a user accesses your service to avoid hitting rate
         # limits.
-        # TODO: change the users subscription and pricing
 
         webhook_object = data["object"]
         stripe_customer_id = webhook_object["customer"]
@@ -228,8 +227,28 @@ def payment_details(request, payment_id):
             messages.success(request, message="Successfuly made an mpesa payment")
             return redirect("/")
 
+    if payment.variant == "braintree":
+        if request.method == "POST":
+            form = payment.get_form(data=request.POST or None)
+            if form.is_valid():
+                form.save()
+                messages.success(request, message="Successfuly made a payment")
+                return redirect("/")
+            else:
+                messages.error(request, f"{form.errors}")
+
     try:
         form = payment.get_form(data=data or None)
+        if form.is_valid():
+            form.save()
+        else:
+            messages.error(request, f"{form.errors}")
+        # form
+        # 'name': ['This field is required.'], 'number': ['This field is required.'],
+        # 'expiration': ['This field is required.']
+        # # 'cvv2'
+        # import pdb
+        # pdb.set_trace()
     except RedirectNeeded as redirect_to:
         return redirect(str(redirect_to))
     return TemplateResponse(

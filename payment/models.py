@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
@@ -24,14 +22,20 @@ class Payment(BasePayment):
     def __str__(self):
         return f"{self.variant} - {self.billing_country_area}"
 
-    def get_failure_url(self) -> str:
-        return super().get_failure_url()
+    def get_failure_url(self):
+        return "http://localhost:8000/"
 
-    def get_success_url(self) -> str:
-        return super().get_success_url()
+    def get_success_url(self):
+        return "http://localhost:8000/"
 
     def get_purchased_items(self):
-        return super().get_purchased_items()
+        yield PurchasedItem(
+            name=self.description,
+            sku="BSKV",
+            quantity=1,
+            price=self.total,
+            currency=self.currency,
+        )
 
     def save(self, **kwargs):
         if self.mobile_number:

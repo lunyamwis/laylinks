@@ -34,3 +34,6 @@ disable=
     R1705, # Unnecessary "elif" after "return" (no-else-return)
     R1710, # Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
     W0613, # Unused argument 'args' (unused-argument)
+    W0223, # Method 'release' is abstract in class 'BasicProvider' but is not overridden (abstract-method)
+    W0703, # Catching too general exception Exception (broad-except)
+    R1725, # Consider using Python 3 style super() without arguments (super-with-arguments

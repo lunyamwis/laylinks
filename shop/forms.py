@@ -2,7 +2,11 @@ from django import forms
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 
-PAYMENT_CHOICES = (("Paypal", "Credit Card"), ("Mpesa", "Mpesa"))
+PAYMENT_CHOICES = (
+    ("Paypal", "paypal"),
+    ("Mpesa", "Mpesa"),
+    ("braintree", "credit card"),
+)
 
 
 class CheckoutForm(forms.Form):

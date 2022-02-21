@@ -12,6 +12,7 @@ class BraintreePaymentForm(CreditCardPaymentFormWithName):
         data = self.cleaned_data
 
         if not self.errors and not self.payment.transaction_id:
+
             result = braintree.Transaction.sale(
                 {
                     "amount": str(self.payment.total),
@@ -26,6 +27,7 @@ class BraintreePaymentForm(CreditCardPaymentFormWithName):
             if result.is_success:
                 self.transaction_id = result.transaction.id
             else:
+
                 self._errors["__all__"] = self.error_class([result.message])
                 self.payment.change_status(PaymentStatus.ERROR)
 

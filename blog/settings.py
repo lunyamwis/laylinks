@@ -291,12 +291,26 @@ CONSUMER_KEY = env("CONSUMER_KEY")
 CONSUMER_SECRET = env("CONSUMER_SECRET")
 PAYMENT_VARIANTS = {
     "Paypal": (
-        "payments.paypal.PaypalCardProvider",
-        {"client_id": env("PAYPAL_CLIENT"), "secret": env("PAYPAL_SECRET")},
+        "payments.paypal.PaypalProvider",
+        {
+            "client_id": env("PAYPAL_CLIENT"),
+            "secret": env("PAYPAL_SECRET"),
+            "endpoint": "https://api.sandbox.paypal.com",
+            "capture": False,
+        },
     ),
     "Mpesa": (
         "payments.mpesa.MpesaProvider",
         {"consumer_key": CONSUMER_KEY, "consumer_secret": CONSUMER_SECRET},
+    ),
+    "braintree": (
+        "payments.braintree.BraintreeProvider",
+        {
+            "merchant_id": env("merchant_id"),
+            "public_key": env("public_key"),
+            "private_key": env("private_key"),
+            "sandbox": True,
+        },
     ),
 }
 
