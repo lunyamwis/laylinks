@@ -24,6 +24,7 @@ from .views import (
     EvangelismWizzard,
     MemberListView,
     MemberRegistrationWizzard,
+    MinisterDetailView,
     MinisterListView,
     MinisterRegistrationWizzard,
     MinistryListView,
@@ -68,6 +69,7 @@ urlpatterns = [
         name="minister_register_wizzard",
     ),
     path("minister/list/", MinisterListView.as_view(), name="minister_list"),
+    path("minister/detail/<pk>/", MinisterDetailView.as_view(), name="minister_detail"),
     path(
         "ministry/register/",
         MinistryRegistrationWizzard.as_view(MINISTRY_FORMS),

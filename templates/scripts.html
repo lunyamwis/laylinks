@@ -15,3 +15,35 @@
   new WOW().init();
 
 </script>
+
+<script src="{% static 'js/podcast/jquery-ui.js' %}"></script>
+<script src="{% static 'js/podcast/popper.min.js' %}"></script>
+<script src="{% static 'js/podcast/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/podcast/jquery.stellar.min.js' %}"></script>
+<script src="{% static 'js/podcast/jquery.countdown.min.js' %}"></script>
+<script src="{% static 'js/podcast/jquery.magnific-popup.min.js' %}"></script>
+<script src="{% static 'js/podcast/aos.js' %}"></script>
+
+<script src="{% static 'js/podcast/mediaelement-and-player.min.js' %}"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var mediaElements = document.querySelectorAll('video, audio'), total = mediaElements.length;
+
+    for (var i = 0; i < total; i++) {
+      new MediaElementPlayer(mediaElements[i], {
+        pluginPath: 'https://cdn.jsdelivr.net/npm/mediaelement@4.2.7/build/',
+        shimScriptAccess: 'always',
+        success: function () {
+          var target = document.body.querySelectorAll('.player'), targetTotal = target.length;
+          for (var j = 0; j < targetTotal; j++) {
+            target[j].style.visibility = 'visible';
+          }
+        }
+      });
+    }
+  });
+</script>
+
+
+<script src="{% static 'js/podcast/main.js' %}"></script>

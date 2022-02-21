@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .row>.col,
+    .bd-example-row .row>[class^="col-"] {
+        padding-top: .75rem;
+        padding-bottom: .75rem;
+        background-color: rgba(74, 92, 190, 0.15);
+        border: 1px solid rgba(74, 92, 190, 0.15);
+    }
+</style>
+<section class="container">
+    <div class="bd-example-row">
+        {% if data == 'minister' %}
+        <h3><i>{{object.name}}</i> profile</h3>
+        <hr>
+        <div class="row">
+            <div class="col"><b>Name</b></div>
+            <div class="col">{{object.name}}</div>
+            <div class="w-100"></div>
+            <div class="col"><b>Email</b></div>
+            <div class="col">{{object.email}}</div>
+            <div class="w-100"></div>
+            <div class="col"><b>Available</b></div>
+            <div class="col">{{object.available}}</div>
+            <div class="w-100"></div>
+            <div class="col"><b>Fields</b></div>
+            <div class="col">
+                <ul>
+                    {% for field in object.fields.all %}
+                    <li><i>{{field.get_field_display}}</i></li>
+                    <li><i>{{field.event_name}}</i></li>
+                    <li><i>{{field.sermon_theme}}</i></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="w-100"></div>
+            <div class="col"><b>Home Church</b></div>
+            <div class="col">{{object.home_church_name}}</div>
+            <div class="w-100"></div>
+            <div class="col"><b>Contact Assistant</b></div>
+            <div class="col">{{object.contact_assistant_name}}</div>
+            <div class="w-100"></div>
+            <div class="col"><b>Contact Email</b></div>
+            <div class="col">{{object.contact_assistant_email}}</div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

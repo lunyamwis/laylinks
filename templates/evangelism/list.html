@@ -48,8 +48,13 @@
                 {% else %}
                 <td>no events</td>
                 {% endif %}
-                <td><a href="{% url 'evangelism:evangelism_wizzard' %}?minister={{obj.pk}}"> <button
-                            class="btn btn-sm btn-success">Invite</button></a></td>
+                <td class="btn-btn-group">
+                    <a href="{% url 'evangelism:minister_detail' obj.pk %}"> <button
+                            class="btn btn-sm btn-warning">View</button></a>
+                    <a href="{% url 'evangelism:evangelism_wizzard' %}?minister={{obj.pk}}">
+                        <button class="btn btn-sm btn-success">Invite</button></a>
+
+                </td>
             </tr>
             {% endfor %}
             {% elif data == 'ministry' %}

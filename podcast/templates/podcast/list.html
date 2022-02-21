@@ -2,44 +2,60 @@
 
 {% block content %}
 <section class="container">
-    <div class="thumbnail">
-        {% for channel in object_list %}
-        <h3>{{ channel.title }}</h3>
-        <p>{{ channel.description|striptags }}</p>
-        <ul>
-            {% if channel.language %}<li>{{ channel.language }}</li>{% endif %}
-            {% if channel.copyright %}<li>{{ channel.copyright }}</li>{% endif %}
-            {% if channel.managing_editor %}<li>{{ channel.managing_editor }}</li>{% endif %}
-            {% if channel.web_master %}<li>{{ channel.web_master }}</li>{% endif %}
-            {% if channel.pub_date %}<li>{{ channel.pub_date|date:'r' }}</li>{% endif %}
-            {% if channel.last_build_date %}<li>{{ channel.last_build_date|date:'r' }}</li>
-            {% endif %}
-            <!-- <category></category> -->
-            {% if channel.generator %}<li>{{ channel.generator }}</li>{% endif %}
-            {% if channel.ttl %}<li>{{ channel.ttl }}</li>{% endif %}
-            {% if channel.image %}
-            <image src="{{ channel.image.url }}" class="img-responsive img-rounded"
-                style="max-height: 50px; max-width: 50px;">{% endif %}
+    <div class="site-section">
+        <div class="container">
 
-                {% if channel.subtitle %}<li>{{ channel.subtitle }}</li>{% endif %}
-                {% if channel.summary %}<li>{{ channel.summary }}</li>{% endif %}
-                <li>{{ channel.block }}</li>
-                <li>{{ channel.explicit }}</li>
-        </ul>
-        {% for item in channel.item_set.all %}
-        <ol>
-            <li>Title: {{ item.title }}</li>
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="featured-user  mb-5 mb-lg-0">
+                        <h3 class="mb-4">Popular Channels</h3>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#" class="d-flex align-items-center">
+                                    {% for channel in object_list %}
+                                    {% if channel %}
+                                    <img src="{{ channel.image.url }}" alt="Image" class="img-fluid mr-2">
+                                    <div class="podcaster">
+                                        <span class="d-block">{{ channel.title }}</span>
+                                        <span class="small">32,420 podcasts</span>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </a>
+                            </li>
 
-            <li>Description: {{ item.description }}</li>
-            {% if item.author %}<li>Author: {{ item.author }}</li>{% endif %}
-            <audio controls>
-                <source src="{{item.audio.url}}" type="audio/mpeg">
-            </audio>
-        </ol>
-        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
 
-        {% endfor %}
-    </div>
+                <div class="col-lg-9">
+
+                    <ol>
+                        {% for channel in object_list %}
+                        {% for item in channel.item_set.all %}
+
+                        <div class="d-block d-md-flex podcast-entry bg-white mb-5" data-aos="fade-up">
+                            <div class="image" style="background-image: url('{{ item.enclosure.url }}');"></div>
+                            <div class="text">
+                                <h3>{{channel.title}}</h3>
+                                <h3 class="font-weight-light"><a href="single-post.html">{{item.title}}</a></h3>
+                                <div class="text-white mb-3"><span class="text-black-opacity-05"><small>{{item.author}}
+                                            <span class="sep">/</span>{{item.created_at}} <span
+                                                class="sep">/</span></small></span></div>
+
+
+                                <div class="player">
+                                    <audio id="player2" preload="none" controls style="max-width: 100%">
+                                        <source src="{{item.audio.url}}" type="audio/mp3">
+                                    </audio>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {% endfor %}
+                        {% endfor %}
+                </div>
 
 </section>
 {% endblock %}

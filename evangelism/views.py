@@ -11,6 +11,7 @@ from django.core.mail import send_mail
 from django.forms.models import construct_instance
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from formtools.wizard.views import SessionWizardView
 
@@ -178,6 +179,16 @@ class MinisterListView(ListView):
         """this function helps assign variables to the jinja templates"""
         context = super().get_context_data(**kwargs)
         context["now"] = timezone.now()
+        context["data"] = "minister"
+        return context
+
+
+class MinisterDetailView(DetailView):
+    model = Minister
+    template_name = "evangelism/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context["data"] = "minister"
         return context
 
