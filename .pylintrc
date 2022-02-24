@@ -37,3 +37,4 @@ disable=
     W0223, # Method 'release' is abstract in class 'BasicProvider' but is not overridden (abstract-method)
     W0703, # Catching too general exception Exception (broad-except)
     R1725, # Consider using Python 3 style super() without arguments (super-with-arguments
+    R1721, # Unnecessary use of a comprehension (unnecessary-comprehension)

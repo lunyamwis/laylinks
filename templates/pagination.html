@@ -1,0 +1,53 @@
+<style>
+    .pagination li {
+        color: black;
+        float: left;
+        padding: 8px 16px;
+        text-decoration: none;
+        transition: background-color .3s;
+        border: 1px solid #ddd;
+    }
+
+    .pagination li.active {
+        background-color: #6e8da1;
+        color: white;
+        border: 1px solid #144C62;
+    }
+
+    .pagination a:hover:not(.active) {
+        background-color: #ddd;
+    }
+</style>
+{% if page_obj %}
+{% load proper_paginate %}
+{% load url_replace %}
+<div class="pagination" style="justify-content: center;">
+    {% if page_obj.number == 1 %}
+    <li class="disabled"><span>⇤</span></li>
+    {% else %}
+    <li><a class="page-link" href="?{% url_replace request 'page' 1 %}">⇤</a></li>
+    {% endif %}
+    {% if page_obj.has_previous %}
+    <li><a class="page-link" href="?{% url_replace request 'page' page_obj.previous_page_number %}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in paginator|proper_paginate:page_obj.number %}
+    {% if page_obj.number == i %}
+    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+    <li><a class="page-link" href="?{% url_replace request 'page' i %}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <li><a class="page-link" href="?{% url_replace request 'page' page_obj.next_page_number %}">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+    {% if page_obj.number == paginator.num_pages %}
+    <li class="disabled"><span>⇥</span></li>
+    {% else %}
+    <li><a class="page-link" href="?{% url_replace request 'page' paginator.num_pages %}">⇥</a></li>
+    {% endif %}
+</div>
+{% endif %}

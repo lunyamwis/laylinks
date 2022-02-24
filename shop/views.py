@@ -26,7 +26,7 @@ def create_ref_code():
 
 
 def products(request):
-    context = {"items": Item.objects.all()}
+    context = {"items": Item.objects.none()}
     return render(request, "products.html", context)
 
 

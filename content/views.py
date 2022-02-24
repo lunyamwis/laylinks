@@ -1,13 +1,14 @@
-from django.views import generic
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from django.views import generic
+
 from .models import Course, Video
-from .mixins import CoursePermissionMixin
 
 
 class CourseListView(generic.ListView):
     template_name = "content/course_list.html"
     queryset = Course.objects.all()
+    paginate_by = 10
 
 
 class CourseDetailView(generic.DetailView):
@@ -23,11 +24,16 @@ class VideoDetailView(LoginRequiredMixin, generic.DetailView):
         course = self.get_course()
         subscription = self.request.user.subscription
         pricing_tier = subscription.pricing
-        subscription_is_active = subscription.status == "active" or subscription.status == "trialing"
+        subscription_is_active = (
+            subscription.status == "active" or subscription.status == "trialing"
+        )
 
-        context.update({
-            "has_permission": pricing_tier in course.pricing_tiers.all() and subscription_is_active
-        })
+        context.update(
+            {
+                "has_permission": pricing_tier in course.pricing_tiers.all()
+                and subscription_is_active
+            }
+        )
         return context
 
     def get_course(self):

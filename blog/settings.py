@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "payment",
     "donation",
     "shop",
+    "base",
     "users",
     "evangelism",
     "allauth",
