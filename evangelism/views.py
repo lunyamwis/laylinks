@@ -3,6 +3,7 @@ Date: 01/02/2022
 Author: Martin Luther Bironga
 Purpose: Evangelism Registrations and Workflows
 """
+from collections import OrderedDict
 
 from django.conf import settings
 from django.contrib import messages
@@ -263,6 +264,29 @@ class EvangelismWizzard(SessionWizardView):
 
     form_list = EVANGELISM_FORMS
     template_name = "evangelism/wizzard.html"
+
+    def get_form_list(self):
+
+        form_list = OrderedDict()
+
+        cleaned_data = self.get_cleaned_data_for_step("field_details") or {}
+
+        for form_key, form_class in self.form_list.items():
+            if cleaned_data and cleaned_data["is_event"] == "S":
+                if form_key == "event_details":
+                    continue
+                else:
+                    pass
+
+            # try to fetch the value from condition list, by default, the form
+            # gets passed to the new list.
+            condition = self.condition_dict.get(form_key, True)
+            if callable(condition):
+                # call the value if needed, passes the current instance.
+                condition = condition(self)
+            if condition:
+                form_list[form_key] = form_class
+        return form_list
 
     def done(self, form_list, form_dict):
         """

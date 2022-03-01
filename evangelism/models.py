@@ -23,6 +23,10 @@ class Evangelism(BaseModel):
         PUBLISHING = "PU", _("Publishing Evangelism")
         LAY = "L", _("Lay Evangelism")
 
+    class EventSermonOption(models.TextChoices):
+        SERMON = "S", _("Sermon")
+        EVENT = "E", _("Event")
+
     class EventOptions(models.TextChoices):
         HEALTHEXPO = "HE", _("Health Expo")
         PERSONAL = "P", _("Personal")
@@ -31,10 +35,14 @@ class Evangelism(BaseModel):
         LIVESTREAM = "L", _("Live Streaming")
         RECORDED = "R", _("Recorded Message")
         MATERIAL = "MD", _("Printed Material Distribution")
-        SERMON = "S", _("Sermon")
 
     field = models.CharField(
         max_length=50, choices=FieldOptions.choices, default=FieldOptions.PERSONAL
+    )
+    is_event = models.CharField(
+        max_length=50,
+        choices=EventSermonOption.choices,
+        default=EventSermonOption.SERMON,
     )
     event = models.CharField(
         max_length=50, choices=EventOptions.choices, default=EventOptions.PERSONAL

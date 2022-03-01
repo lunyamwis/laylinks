@@ -33,4 +33,15 @@
         <input class="btn btn-info" type="submit" value="{% trans 'submit' %}" />
     </form>
 </section>
+<script>
+    let currentForm = document.getElementById("id_evangelism_wizzard-current_step")
+    /*
+    * we need to put a condition that incase
+    * someone selects sermon it directs them to
+    * sermon details, else it takes them to event details form
+    * and no showing of sermon details
+    */
+    console.log(currentForm.name)
+    console.log(currentForm.value)
+</script>
 {% endblock %}

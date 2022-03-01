@@ -163,6 +163,7 @@ class EvangelismForm(ModelForm):
         model = Evangelism
         fields = [
             "field",
+            "is_event",
         ]
 
 

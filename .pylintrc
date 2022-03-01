@@ -38,3 +38,5 @@ disable=
     W0703, # Catching too general exception Exception (broad-except)
     R1725, # Consider using Python 3 style super() without arguments (super-with-arguments
     R1721, # Unnecessary use of a comprehension (unnecessary-comprehension)
+    E1101, # Instance of 'list' has no 'items' member (no-member)
+    R1724, # Unnecessary "else" after "continue" (no-else-continue)
