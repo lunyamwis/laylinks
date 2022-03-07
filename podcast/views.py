@@ -40,7 +40,7 @@ class ItemDetail(generic.TemplateView):
 class Channels(ListView):
     model = models.Channel
     template_name = "podcast/list.html"
-    paginate_by = 100  # if pagination is desired
+    paginate_by = 10  # if pagination is desired
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

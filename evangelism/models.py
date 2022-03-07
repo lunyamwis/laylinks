@@ -37,7 +37,11 @@ class Evangelism(BaseModel):
         MATERIAL = "MD", _("Printed Material Distribution")
 
     field = models.CharField(
-        max_length=50, choices=FieldOptions.choices, default=FieldOptions.PERSONAL
+        max_length=50,
+        choices=FieldOptions.choices,
+        default=FieldOptions.PERSONAL,
+        null=True,
+        blank=True,
     )
     is_event = models.CharField(
         max_length=50,
@@ -45,17 +49,21 @@ class Evangelism(BaseModel):
         default=EventSermonOption.SERMON,
     )
     event = models.CharField(
-        max_length=50, choices=EventOptions.choices, default=EventOptions.PERSONAL
+        max_length=50,
+        choices=EventOptions.choices,
+        default=EventOptions.PERSONAL,
+        null=True,
+        blank=True,
     )
-    event_name = models.TextField(max_length=1024)
-    event_date = models.DateTimeField()
-    event_location = models.CharField(max_length=255)
-    event_purpose = models.TextField()
-    event_duration = models.CharField(max_length=1024)
+    event_name = models.TextField(max_length=1024, null=True, blank=True)
+    event_date = models.DateTimeField(null=True, blank=True)
+    event_location = models.CharField(max_length=255, null=True, blank=True)
+    event_purpose = models.TextField(null=True, blank=True)
+    event_duration = models.CharField(max_length=1024, null=True, blank=True)
     sermon_theme = models.TextField(null=True, blank=True)
     sermon_length = models.IntegerField(null=True, blank=True)
     number_attendees = models.IntegerField(null=True, blank=True)
-    completed = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False, null=True, blank=True)
     budget = models.FloatField(null=True, blank=True)
     number_converts = models.IntegerField(null=True, blank=True)
     number_followups = models.IntegerField(null=True, blank=True)
